@@ -1,0 +1,9 @@
+src/locales
+dist/
+tests/
+demo/
+coverage/
+**/*-min.js
+**/*.min.js
+package-lock.json
+yarn.lock

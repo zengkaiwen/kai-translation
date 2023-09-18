@@ -1,0 +1,8 @@
+body {
+  font-family: 'PingFangSC-Regular', 'Microsoft YaHei', Courier, monospace;
+  background-color: transparent;
+}
+#root {
+  overflow: hidden;
+  padding: 0;
+}
