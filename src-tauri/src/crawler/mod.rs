@@ -1,7 +1,4 @@
-use crate::constant::TranslateQuery;
+pub mod alibaba;
 
-mod alibaba;
-
-pub fn translate(query: TranslateQuery) -> String {
-  return String::from("");
-}
+pub use crate::constant::*;
+pub use alibaba::translate;

@@ -1,6 +1,7 @@
 /* eslint-disable object-curly-spacing */
 import * as React from 'react';
 import { styled } from 'styled-components';
+import { invoke } from '@tauri-apps/api/tauri';
 
 const Wrapper = styled.div`
   overflow: hidden;
@@ -95,6 +96,11 @@ function App() {
   const [translateText, setTranslateText] = React.useState<string>('');
 
   const handleTranslate = React.useCallback(async () => {
+    invoke('alibaba_transform', {
+      source: 'en',
+      target: 'zh',
+      text: 'With all the moving pieces in Tauri, you may run into a problem that requires debugging. There are many locations where error details are printed, and Tauri includes some tools to make the debugging process more straightforward.',
+    }).then((res) => console.log(res));
     if (!text) return;
   }, [text, translateText]);
 
