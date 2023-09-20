@@ -1,3 +1,8 @@
+html,
+body {
+  /* 阻止回弹效果 */
+  overscroll-behavior: none;
+}
 body {
   font-family: 'PingFangSC-Regular', 'Microsoft YaHei', Courier, monospace;
   background-color: transparent;
