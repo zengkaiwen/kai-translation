@@ -31,15 +31,15 @@ export const LanguageList: TLanguageItem[] = [
     name: '韩语',
   },
   {
+    key: 'th',
+    name: '泰语',
+  },
+  {
     key: 'es',
     name: '西班牙语',
   },
   {
     key: 'pt',
     name: '葡萄牙语',
-  },
-  {
-    key: 'th',
-    name: '泰语',
   },
 ];

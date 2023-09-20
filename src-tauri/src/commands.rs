@@ -13,3 +13,10 @@ pub async fn alibaba_transform(source: String, target: String, text: String) -> 
     Err(_) => Err(()),
   }
 }
+
+#[tauri::command]
+pub async fn console_log(text: String) {
+  println!("=====【Debug】=====");
+  println!("{}", text);
+  println!("==================");
+}

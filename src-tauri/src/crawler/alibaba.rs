@@ -61,7 +61,7 @@ pub async fn translate(query: TranslateQuery) -> Result<String, Error> {
     header("Content-Type", "multipart/form-data").
     form(&params)
     .send().await?.text().await?;
-  println!("===== result {:?}", res2);
+  // println!("===== result {:?}", res2);
 
   let data: Response = from_str(&res2)?;
 

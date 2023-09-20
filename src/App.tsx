@@ -2,13 +2,13 @@
 import * as React from 'react';
 import { styled } from 'styled-components';
 import { useMount, useUnmount } from 'ahooks';
-import { invoke } from '@tauri-apps/api/tauri';
 import { LogicalSize, appWindow } from '@tauri-apps/api/window';
 import cls from 'classnames';
 import copy from 'copy-to-clipboard';
 import { LanguageList, TLanguageItem } from './common/constants';
 import Accordion from './components/Accordion';
 import IconSpin from './components/IconSpin';
+import { rConsoleLog, rTranslate } from './utils';
 
 const Wrapper = styled.div`
   overflow: hidden;
@@ -17,6 +17,7 @@ const Wrapper = styled.div`
   max-height: 720px;
   background-color: #ffffff;
   border-radius: 10px;
+  border: 1px solid #e5e5e5;
   > div {
     margin: 10px 12px;
     border-radius: 6px;
@@ -187,6 +188,7 @@ const observer = new ResizeObserver((entries) => {
 
 function App() {
   useMount(() => {
+    rConsoleLog('监听');
     // 将body元素添加到观察者中
     observer.observe(document.body);
   });
@@ -242,11 +244,11 @@ function App() {
     setLoading(true);
     setOpenResult(true);
     try {
-      const transResult: string = await invoke('alibaba_transform', {
-        source: sourceLang.key,
-        target: targetLang.key === 'auto' ? 'zh' : targetLang.key,
+      const transResult: string = await rTranslate(
+        sourceLang.key,
+        targetLang.key === 'auto' ? 'zh' : targetLang.key,
         text,
-      });
+      );
       setTranslateText(transResult);
     } catch (error) {}
     setLoading(false);
@@ -364,11 +366,13 @@ function App() {
               </div>
             )}
             {!loading && translateText && <div className="content">{translateText}</div>}
-            {!loading && !translateText && <div className="empty">啊呜~ 出错啦</div>}
-            <div className="footer flex items-center justify-end">
-              {/* <span className="i-carbon-volume-up icon" title="朗读" /> */}
-              <span className="i-carbon-copy icon" title="复制" onClick={() => handleCopy(translateText)} />
-            </div>
+            {!loading && !translateText && <div className="empty">{text ? '啊呜~ 出错啦' : '没有需翻译内容'}</div>}
+            {translateText && (
+              <div className="footer flex items-center justify-end">
+                {/* <span className="i-carbon-volume-up icon" title="朗读" /> */}
+                <span className="i-carbon-copy icon" title="复制" onClick={() => handleCopy(translateText)} />
+              </div>
+            )}
           </>
         </Accordion>
       </div>
