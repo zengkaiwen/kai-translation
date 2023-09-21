@@ -10,6 +10,7 @@ fn main() {
         .invoke_handler(tauri::generate_handler![
           commands::alibaba_transform,
           commands::console_log,
+          commands::shortcut_control,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

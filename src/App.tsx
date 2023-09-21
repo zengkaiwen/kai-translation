@@ -3,12 +3,14 @@ import * as React from 'react';
 import { styled } from 'styled-components';
 import { useMount, useUnmount } from 'ahooks';
 import { LogicalSize, appWindow } from '@tauri-apps/api/window';
+import { register } from '@tauri-apps/api/globalShortcut';
+import { listen, TauriEvent } from '@tauri-apps/api/event';
 import cls from 'classnames';
 import copy from 'copy-to-clipboard';
 import { LanguageList, TLanguageItem } from './common/constants';
 import Accordion from './components/Accordion';
 import IconSpin from './components/IconSpin';
-import { rConsoleLog, rTranslate } from './utils';
+import { rActiveText, rConsoleLog, rTranslate } from './utils';
 
 const Wrapper = styled.div`
   overflow: hidden;
@@ -191,6 +193,18 @@ function App() {
     rConsoleLog('监听');
     // 将body元素添加到观察者中
     observer.observe(document.body);
+
+    register('Alt+Shift+A', (shortcut) => {
+      rConsoleLog(`按下快捷键：${shortcut}`);
+      rActiveText();
+    });
+
+    listen(TauriEvent.WINDOW_BLUR, (event) => {
+      rConsoleLog('window blur');
+      if (event.windowLabel === 'main') {
+        appWindow.hide();
+      }
+    });
   });
 
   useUnmount(() => {

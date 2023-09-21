@@ -12,3 +12,7 @@ export function rTranslate(source: TLanguage, target: TLanguage, text: string) {
     text,
   }) as Promise<string>;
 }
+
+export function rActiveText() {
+  return invoke('shortcut_control') as Promise<string>;
+}
