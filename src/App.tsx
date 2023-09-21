@@ -1,16 +1,17 @@
 /* eslint-disable object-curly-spacing */
 import * as React from 'react';
 import { styled } from 'styled-components';
-import { useMount, useUnmount } from 'ahooks';
+import { useMount, usePrevious, useUnmount } from 'ahooks';
 import { LogicalSize, appWindow } from '@tauri-apps/api/window';
 import { register } from '@tauri-apps/api/globalShortcut';
 import { listen, TauriEvent } from '@tauri-apps/api/event';
+import { Command } from '@tauri-apps/api/shell';
+import { readText, writeText } from '@tauri-apps/api/clipboard';
 import cls from 'classnames';
-import copy from 'copy-to-clipboard';
 import { LanguageList, TLanguageItem } from './common/constants';
 import Accordion from './components/Accordion';
 import IconSpin from './components/IconSpin';
-import { rActiveText, rConsoleLog, rTranslate } from './utils';
+import { rConsoleLog, rTranslate } from './utils';
 
 const Wrapper = styled.div`
   overflow: hidden;
@@ -194,15 +195,27 @@ function App() {
     // 将body元素添加到观察者中
     observer.observe(document.body);
 
-    register('Alt+Shift+A', (shortcut) => {
+    const command = Command.sidecar('binaries/autocopy');
+
+    register('Alt+Shift+A', async (shortcut) => {
       rConsoleLog(`按下快捷键：${shortcut}`);
-      rActiveText();
+      // rActiveText();
+      await command.execute();
+      appWindow.show();
+      const res = await readText();
+      if (res) {
+        setText(res);
+        handleTranslate(res);
+      }
+      rConsoleLog('执行完毕');
     });
 
     listen(TauriEvent.WINDOW_BLUR, (event) => {
       rConsoleLog('window blur');
       if (event.windowLabel === 'main') {
         appWindow.hide();
+        setText('');
+        setTranslateText('');
       }
     });
   });
@@ -243,8 +256,10 @@ function App() {
   const [openResult, setOpenResult] = React.useState<boolean>(false);
   const [loading, setLoading] = React.useState<boolean>(false);
 
-  const handleTranslate = React.useCallback(async () => {
-    if (!text) {
+  const handleTranslate = React.useCallback(async (_text?: string) => {
+    const sourceText = _text || text;
+    console.log('文案', sourceText);
+    if (!sourceText) {
       setOpenResult(false);
       setTranslateText('');
       return;
@@ -261,7 +276,7 @@ function App() {
       const transResult: string = await rTranslate(
         sourceLang.key,
         targetLang.key === 'auto' ? 'zh' : targetLang.key,
-        text,
+        sourceText,
       );
       setTranslateText(transResult);
     } catch (error) {}
@@ -283,7 +298,7 @@ function App() {
 
   const handleCopy = React.useCallback((msg: string) => {
     if (!msg) return;
-    copy(msg);
+    writeText(msg);
   }, []);
 
   return (
@@ -310,7 +325,7 @@ function App() {
         <div className="option-bar flex items-center justify-end">
           {/* <span className="i-carbon-volume-up icon" title="朗读" /> */}
           <span className="i-carbon-copy icon" title="复制" onClick={() => handleCopy(text)} />
-          <span className="i-carbon-ibm-watson-language-translator icon" title="翻译" onClick={handleTranslate} />
+          <span className="i-carbon-ibm-watson-language-translator icon" title="翻译" onClick={() => handleTranslate()} />
         </div>
       </div>
       {/* 选择两侧语言类型 */}

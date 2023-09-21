@@ -31,12 +31,12 @@ pub async fn shortcut_control(window: Window) -> Result<String, ()> {
   // 自动执行 ctrl+c 将内容拷贝到剪贴板
   let mut enigo = Enigo::new();
   // write text
-  enigo.key_sequence("Hello World! here is a lot of text  ❤️");
+  // enigo.key_sequence("Hello World! here is a lot of text  ❤️");
 
   // select all
-  // enigo.key_down(Key::Control);
-  // enigo.key_click(Key::Layout('a'));
-  // enigo.key_up(Key::Control);
+  enigo.key_down(Key::Control);
+  enigo.key_click(Key::Layout('a'));
+  enigo.key_up(Key::Control);
   // 读取剪贴板最新文本，看是否存在
   // 不存在的话，返回空字符串
   // 存在的话，获取当前鼠标所在位置，显示窗口，显示成功后
