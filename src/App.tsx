@@ -278,7 +278,7 @@ function App() {
         targetLang.key === 'auto' ? 'zh' : targetLang.key,
         sourceText,
       );
-      setTranslateText(transResult);
+      setTranslateText(transResult || '');
     } catch (error) {}
     setLoading(false);
   }, [openSourcePanel, openTargetPanel, sourceLang.key, targetLang.key, text]);
