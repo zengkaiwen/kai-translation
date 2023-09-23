@@ -3,7 +3,6 @@ import * as React from 'react';
 import { styled } from 'styled-components';
 import { useMount, useUnmount, useUpdateEffect } from 'ahooks';
 import { LogicalSize, appWindow } from '@tauri-apps/api/window';
-import { listen, TauriEvent } from '@tauri-apps/api/event';
 import { writeText } from '@tauri-apps/api/clipboard';
 import cls from 'classnames';
 import { message } from '@feb-team/legao-react';
@@ -11,7 +10,7 @@ import { message } from '@feb-team/legao-react';
 import { LanguageList, TLanguageItem } from './common/constants';
 import Accordion from './components/Accordion';
 import IconSpin from './components/IconSpin';
-import { rConsoleLog, rTranslate } from './utils';
+import { rTranslate } from './utils';
 import Scrollbar from './components/Scrollbar';
 import useAutoCopyHook from './hooks/useAutoCopyHook';
 
