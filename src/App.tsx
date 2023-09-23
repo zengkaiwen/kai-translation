@@ -214,31 +214,8 @@ function App() {
   }, [copyText]);
 
   useMount(() => {
-    rConsoleLog('监听');
     // 将body元素添加到观察者中
     observer.observe(document.body);
-
-    // listen(TauriEvent.WINDOW_BLUR, (event) => {
-    //   rConsoleLog(`window blur ${!isMovingRef.current}-${event.windowLabel}`);
-    //   if (!isMovingRef.current) {
-    //     appWindow.hide();
-    //     setText('');
-    //     setTranslateText('');
-    //   }
-    // });
-
-    // window.addEventListener('mousedown', () => {
-    //   rConsoleLog('鼠标点击');
-    //   isMovingRef.current = true;
-    // });
-    // // window.addEventListener('mousemove', () => {
-    // //   rConsoleLog('进入');
-    // //   isMovingRef.current = true;
-    // // });
-    // window.addEventListener('mouseup', () => {
-    //   rConsoleLog('移除');
-    //   isMovingRef.current = false;
-    // });
   });
 
   useUnmount(() => {
@@ -333,6 +310,7 @@ function App() {
         <div className="right flex items-center">
           {/* <span className="i-carbon-time" title="历史记录" />
           <span className="i-carbon-settings" title="设置" /> */}
+          <span className="i-carbon-intent-request-scale-in icon" onClick={() => appWindow.hide()} title="隐藏窗口" />
         </div>
       </div>
       <main>
