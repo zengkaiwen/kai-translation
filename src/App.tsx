@@ -1,12 +1,10 @@
 /* eslint-disable object-curly-spacing */
 import * as React from 'react';
 import { styled } from 'styled-components';
-import { useMount, useUnmount } from 'ahooks';
+import { useMount, useUnmount, useUpdateEffect } from 'ahooks';
 import { LogicalSize, appWindow } from '@tauri-apps/api/window';
-import { register } from '@tauri-apps/api/globalShortcut';
 import { listen, TauriEvent } from '@tauri-apps/api/event';
-import { Command } from '@tauri-apps/api/shell';
-import { readText, writeText } from '@tauri-apps/api/clipboard';
+import { writeText } from '@tauri-apps/api/clipboard';
 import cls from 'classnames';
 import { message } from '@feb-team/legao-react';
 
@@ -15,6 +13,7 @@ import Accordion from './components/Accordion';
 import IconSpin from './components/IconSpin';
 import { rConsoleLog, rTranslate } from './utils';
 import Scrollbar from './components/Scrollbar';
+import useAutoCopyHook from './hooks/useAutoCopyHook';
 
 import '@feb-team/legao-react/dist/styles/css/legao.all.css';
 
@@ -206,34 +205,40 @@ const observer = new ResizeObserver((entries) => {
 });
 
 function App() {
+  // const isMovingRef = React.useRef<boolean>(false);
+
+  const copyText = useAutoCopyHook();
+  useUpdateEffect(() => {
+    setText(copyText);
+    handleTranslate(copyText);
+  }, [copyText]);
+
   useMount(() => {
     rConsoleLog('监听');
     // 将body元素添加到观察者中
     observer.observe(document.body);
 
-    const command = Command.sidecar('binaries/autocopy');
+    // listen(TauriEvent.WINDOW_BLUR, (event) => {
+    //   rConsoleLog(`window blur ${!isMovingRef.current}-${event.windowLabel}`);
+    //   if (!isMovingRef.current) {
+    //     appWindow.hide();
+    //     setText('');
+    //     setTranslateText('');
+    //   }
+    // });
 
-    register('Alt+Shift+A', async (shortcut) => {
-      rConsoleLog(`按下快捷键：${shortcut}`);
-      // rActiveText();
-      await command.execute();
-      appWindow.show();
-      const res = await readText();
-      if (res) {
-        setText(res);
-        handleTranslate(res);
-      }
-      rConsoleLog('执行完毕');
-    });
-
-    listen(TauriEvent.WINDOW_BLUR, (event) => {
-      rConsoleLog('window blur');
-      if (event.windowLabel === 'main') {
-        appWindow.hide();
-        setText('');
-        setTranslateText('');
-      }
-    });
+    // window.addEventListener('mousedown', () => {
+    //   rConsoleLog('鼠标点击');
+    //   isMovingRef.current = true;
+    // });
+    // // window.addEventListener('mousemove', () => {
+    // //   rConsoleLog('进入');
+    // //   isMovingRef.current = true;
+    // // });
+    // window.addEventListener('mouseup', () => {
+    //   rConsoleLog('移除');
+    //   isMovingRef.current = false;
+    // });
   });
 
   useUnmount(() => {

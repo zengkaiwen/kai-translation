@@ -50,9 +50,9 @@
         "width": 420,
         "height": 276,
         "transparent": true,
-        "alwaysOnTop": true,
+        "alwaysOnTop": false,
         "decorations": false,
-        "visible": true
+        "visible": false
       }
     ]
   }

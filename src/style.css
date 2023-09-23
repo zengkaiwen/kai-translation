@@ -6,6 +6,7 @@ body {
 body {
   font-family: 'PingFangSC-Regular', 'Microsoft YaHei', Courier, monospace;
   background-color: transparent;
+  overflow: hidden;
 }
 #root {
   overflow: hidden;
