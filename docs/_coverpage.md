@@ -2,7 +2,7 @@
 
 # Z.E.U.S <small>v0.0.2</small>
 
-![Z.E.U.S](./images/app_cover.png ':size=20%')
+![Z.E.U.S](./images/app_cover.png ':size=270')
 
 > 一个小巧方便的跨平台翻译软件，安装包<10M
 >
