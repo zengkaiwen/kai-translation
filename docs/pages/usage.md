@@ -18,6 +18,11 @@
 
 ## 3、划词翻译说明
 
+<video width="500" height="300" controls>
+  <source src="../images/18383.MP4" type="video/mp4" />
+  您的浏览器不支持浏览视频
+</video>
+
 v0.0.2 版本支持划词快捷翻译，在启动软件之后，鼠标选中文本，按下快捷键 “**Shift + Alt + A**” 可以唤起翻译窗口并直接翻译选中的文本
 
 > MacOS 的快捷键是 “**Shift + Option + A**”
