@@ -5,16 +5,15 @@ import { useMount, useUnmount, useUpdateEffect } from 'ahooks';
 import { LogicalSize, appWindow } from '@tauri-apps/api/window';
 import { writeText } from '@tauri-apps/api/clipboard';
 import cls from 'classnames';
-import { message } from '@feb-team/legao-react';
+import { Toast } from '@douyinfe/semi-ui';
 
 import { LanguageList, TLanguageItem } from './common/constants';
 import Accordion from './components/Accordion';
 import IconSpin from './components/IconSpin';
-import { rTranslate } from './utils';
+import { rConsoleLog, rTranslate } from './utils';
 import Scrollbar from './components/Scrollbar';
 import useAutoCopyHook from './hooks/useAutoCopyHook';
-
-import '@feb-team/legao-react/dist/styles/css/legao.all.css';
+import { listen } from '@tauri-apps/api/event';
 
 const Wrapper = styled.div`
   overflow: hidden;
@@ -215,6 +214,10 @@ function App() {
   useMount(() => {
     // 将body元素添加到观察者中
     observer.observe(document.body);
+
+    listen('systemTray:show', () => {
+      rConsoleLog('展示');
+    });
   });
 
   useUnmount(() => {
@@ -253,32 +256,35 @@ function App() {
   const [openResult, setOpenResult] = React.useState<boolean>(false);
   const [loading, setLoading] = React.useState<boolean>(false);
 
-  const handleTranslate = React.useCallback(async (_text?: string) => {
-    const sourceText = _text || text;
-    console.log('文案', sourceText);
-    if (!sourceText) {
-      setOpenResult(false);
-      setTranslateText('');
-      return;
-    }
-    if (openSourcePanel) {
-      setOpenSourcePanel(false);
-    }
-    if (openTargetPanel) {
-      setOpenTargetPanel(false);
-    }
-    setLoading(true);
-    setOpenResult(true);
-    try {
-      const transResult: string = await rTranslate(
-        sourceLang.key,
-        targetLang.key === 'auto' ? 'zh' : targetLang.key,
-        sourceText,
-      );
-      setTranslateText(transResult || '');
-    } catch (error) {}
-    setLoading(false);
-  }, [openSourcePanel, openTargetPanel, sourceLang.key, targetLang.key, text]);
+  const handleTranslate = React.useCallback(
+    async (_text?: string) => {
+      const sourceText = _text || text;
+      console.log('文案', sourceText);
+      if (!sourceText) {
+        setOpenResult(false);
+        setTranslateText('');
+        return;
+      }
+      if (openSourcePanel) {
+        setOpenSourcePanel(false);
+      }
+      if (openTargetPanel) {
+        setOpenTargetPanel(false);
+      }
+      setLoading(true);
+      setOpenResult(true);
+      try {
+        const transResult: string = await rTranslate(
+          sourceLang.key,
+          targetLang.key === 'auto' ? 'zh' : targetLang.key,
+          sourceText,
+        );
+        setTranslateText(transResult || '');
+      } catch (error) {}
+      setLoading(false);
+    },
+    [openSourcePanel, openTargetPanel, sourceLang.key, targetLang.key, text],
+  );
 
   const handleEnter = React.useCallback(
     async (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
@@ -296,7 +302,7 @@ function App() {
   const handleCopy = React.useCallback((msg: string) => {
     if (!msg) return;
     writeText(msg);
-    message.success('复制成功');
+    Toast.success('复制成功');
   }, []);
 
   return (
@@ -326,7 +332,11 @@ function App() {
             <div className="option-bar flex items-center justify-end">
               {/* <span className="i-carbon-volume-up icon" title="朗读" /> */}
               <span className="i-carbon-copy icon" title="复制" onClick={() => handleCopy(text)} />
-              <span className="i-carbon-ibm-watson-language-translator icon" title="翻译" onClick={() => handleTranslate()} />
+              <span
+                className="i-carbon-ibm-watson-language-translator icon"
+                title="翻译"
+                onClick={() => handleTranslate()}
+              />
             </div>
           </div>
           {/* 选择两侧语言类型 */}
