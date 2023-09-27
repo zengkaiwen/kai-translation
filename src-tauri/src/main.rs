@@ -11,7 +11,7 @@ use tauri::{
 
 #[derive(Clone, serde::Serialize)]
 struct Payload {
-    message: String,
+    id: String,
 }
 
 fn main() {
@@ -34,19 +34,9 @@ fn main() {
         .system_tray(system_tray.with_menu(tray_menu))
         .on_system_tray_event(|app, event| match event {
             SystemTrayEvent::MenuItemClick { id, .. } => match id.as_str() {
-                "quit" => {
-                    std::process::exit(0);
+                _ => {
+                    app.emit_all("systemTray", Payload { id: id }).unwrap();
                 }
-                "show" => {
-                    app.emit_all(
-                        "systemTray:show",
-                        Payload {
-                            message: "".to_string(),
-                        },
-                    )
-                    .unwrap();
-                }
-                _ => {}
             },
             _ => {}
         })

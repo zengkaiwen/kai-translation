@@ -1,5 +1,5 @@
 import { invoke } from '@tauri-apps/api/tauri';
-import { TLanguage } from '../common/constants';
+import { TLanguage } from '@/common/constants';
 
 export function rConsoleLog(text: string) {
   invoke('console_log', { text });

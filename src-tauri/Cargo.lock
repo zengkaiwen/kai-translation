@@ -4152,7 +4152,7 @@ checksum = "054a8e68b76250b253f671d1268cb7f1ae089ec35e195b2efb2a4e9a836d0621"
 
 [[package]]
 name = "zeus"
-version = "0.0.2"
+version = "0.0.3"
 dependencies = [
  "anyhow",
  "enigo",

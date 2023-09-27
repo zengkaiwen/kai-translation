@@ -1,7 +1,7 @@
 [package]
 name = "zeus"
-version = "0.0.2"
-description = "A Tauri App"
+version = "0.0.3"
+description = "一个方便小巧的翻译软件"
 authors = ["kevin"]
 license = ""
 repository = ""
@@ -13,7 +13,7 @@ edition = "2021"
 tauri-build = { version = "1.4", features = [] }
 
 [dependencies]
-tauri = { version = "1.4", features = [ "system-tray", "clipboard-all", "shell-sidecar", "global-shortcut-all", "window-all", "macos-private-api"] }
+tauri = { version = "1.4", features = [ "fs-all", "system-tray", "clipboard-all", "shell-sidecar", "global-shortcut-all", "window-all", "macos-private-api"] }
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
 reqwest = { version = "0.11.20", features = ["json", "multipart"] }
