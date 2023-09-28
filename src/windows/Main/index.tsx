@@ -2,9 +2,10 @@
 import * as React from 'react';
 import { styled } from 'styled-components';
 import { useMount, useUnmount, useUpdateEffect } from 'ahooks';
-import { LogicalSize, appWindow } from '@tauri-apps/api/window';
+import { LogicalSize, appWindow, WebviewWindow } from '@tauri-apps/api/window';
 import { writeText } from '@tauri-apps/api/clipboard';
 import cls from 'classnames';
+import { toast } from 'react-hot-toast';
 
 import { LanguageList, TLanguageItem } from '@/common/constants';
 import Accordion from '@/components/Accordion/index.tsx';
@@ -13,8 +14,10 @@ import { rConsoleLog, rTranslate } from '@/utils';
 import Scrollbar from '@/components/Scrollbar/index.tsx';
 import useAutoCopyHook from './_hook/useAutoCopyHook';
 import { listen } from '@tauri-apps/api/event';
-import useSetting from './_hook/useSetting.ts';
 import { SystemTrayPayload } from '@/common/systemtray.ts';
+import useSettingConfig from '@/hooks/useSettingConfig.ts';
+import { GlobalEvent } from '@/common/event';
+import { Setting } from '@/utils/settings';
 
 const Wrapper = styled.div`
   overflow: hidden;
@@ -204,8 +207,8 @@ const observer = new ResizeObserver((entries) => {
 });
 
 function App() {
-  // const isMovingRef = React.useRef<boolean>(false);
-  const { showSettingWindow } = useSetting();
+  const settingWindowRef = React.useRef<WebviewWindow | null>(null);
+  const { loadSettings } = useSettingConfig();
 
   const copyText = useAutoCopyHook();
   useUpdateEffect(() => {
@@ -218,7 +221,7 @@ function App() {
     observer.observe(document.body);
 
     // 监听 systemTray 输入翻译指令
-    listen('systemTray', (event) => {
+    listen(GlobalEvent.SYSTEM_TRAY_ITEM_CLICK, (event) => {
       const { id } = event.payload as SystemTrayPayload;
       rConsoleLog(`systemTray item click, id: ${id}`);
       switch (id) {
@@ -233,6 +236,12 @@ function App() {
         case 'about':
           break;
       }
+    });
+
+    listen(GlobalEvent.UPDATE_SETTINGS_CONFIG, (event) => {
+      rConsoleLog(`设置项更新：${JSON.stringify(event.payload)}`);
+      const settings = event.payload as Setting;
+      loadSettings(settings);
     });
   });
 
@@ -318,7 +327,30 @@ function App() {
   const handleCopy = React.useCallback((msg: string) => {
     if (!msg) return;
     writeText(msg);
-    // Message.success('复制成功');
+    toast.success('复制成功');
+  }, []);
+
+  // =========设置窗口=========
+  const showSettingWindow = React.useCallback(() => {
+    if (settingWindowRef.current) {
+      settingWindowRef.current.show();
+      return;
+    }
+    const settingWindow = new WebviewWindow('setting', {
+      url: '#/setting',
+      decorations: false,
+      fullscreen: false,
+      resizable: false,
+      title: '偏好设置',
+      transparent: true,
+      visible: true,
+      focus: true,
+      hiddenTitle: true,
+      width: 480,
+      height: 320,
+      alwaysOnTop: true,
+    });
+    settingWindowRef.current = settingWindow;
   }, []);
 
   return (
