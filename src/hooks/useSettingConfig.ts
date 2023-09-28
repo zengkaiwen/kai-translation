@@ -43,7 +43,8 @@ function useSettingConfig(): SettingConfigResult {
   const saveSettings = React.useCallback(async (_settings: Setting) => {
     rConsoleLog(`保存配置文件：${JSON.stringify(_settings)}`);
     await writeSettings(_settings);
-    emit(GlobalEvent.UPDATE_SETTINGS_CONFIG, cloneDeep(_settings));
+    await emit(GlobalEvent.SETTINGS_UPDATED, cloneDeep(_settings));
+    rConsoleLog('设置更新事件已发送');
   }, []);
 
   useMount(() => {

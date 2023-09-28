@@ -6,10 +6,11 @@ import { rConsoleLog } from '@/utils';
 import { appWindow } from '@tauri-apps/api/window';
 import { readText } from '@tauri-apps/api/clipboard';
 import { useAtomValue } from 'jotai';
-import { underlineShortcut } from '@/store';
+import { underlineOpened, underlineShortcut } from '@/store';
 
 function useAutoCopyHook() {
   const shortcut = useAtomValue(underlineShortcut);
+  const isUnderline = useAtomValue(underlineOpened);
   const prevShortcut = usePrevious(shortcut);
   const [copyText, setCopyText] = React.useState<string>('');
   const autocopyRef = React.useRef<Command | null>(null);
@@ -21,8 +22,12 @@ function useAutoCopyHook() {
   });
 
   useUpdateEffect(() => {
-    registerShortcut();
-  }, [shortcut]);
+    if (isUnderline) {
+      registerShortcut();
+    } else {
+      unregisterShortcut();
+    }
+  }, [shortcut, isUnderline]);
 
   const registerShortcut = React.useCallback(async () => {
     rConsoleLog(`注册快捷键${shortcut}`);
@@ -48,6 +53,13 @@ function useAutoCopyHook() {
       rConsoleLog('执行完毕');
     });
   }, [prevShortcut, shortcut]);
+
+  const unregisterShortcut = React.useCallback(async () => {
+    const curResigered = await isRegistered(shortcut);
+    if (!curResigered) return;
+
+    unregister(shortcut);
+  }, [shortcut]);
 
   return copyText;
 }

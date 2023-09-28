@@ -28,7 +28,10 @@
       },
       "fs": {
         "all": true,
-        "scope": ["$APPCONFIG/*"]
+        "scope": ["$APPCONFIG/**"]
+      },
+      "path": {
+        "all": true
       },
       "os": {
         "all": true

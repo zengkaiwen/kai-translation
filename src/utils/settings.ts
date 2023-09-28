@@ -1,4 +1,4 @@
-import { exists, BaseDirectory, readTextFile, writeTextFile } from '@tauri-apps/api/fs';
+import { exists, BaseDirectory, readTextFile, writeTextFile, createDir } from '@tauri-apps/api/fs';
 import { cloneDeep, pick } from 'lodash';
 import { TLanguage } from '@/common/constants';
 
@@ -25,9 +25,9 @@ const defaultSettings: Setting = {
 export async function readSettings(): Promise<Setting> {
   let settings: Setting = cloneDeep(defaultSettings);
   // 判断 $APPCONFIG/settings.json 文件是否存在
-  const fileExists = await exists('settings.json', { dir: BaseDirectory.AppConfig });
+  const fileExists = await exists('config/settings.json', { dir: BaseDirectory.AppConfig });
   if (fileExists) {
-    const settingsText = await readTextFile('settings.json', { dir: BaseDirectory.AppConfig });
+    const settingsText = await readTextFile('config/settings.json', { dir: BaseDirectory.AppConfig });
     try {
       const settingsConfig = JSON.parse(settingsText);
       settings = { ...settings, ...settingsConfig };
@@ -45,5 +45,14 @@ export async function readSettings(): Promise<Setting> {
  * @returns
  */
 export async function writeSettings(settings: Setting): Promise<void> {
-  return await writeTextFile('settings.json', JSON.stringify(settings), { dir: BaseDirectory.AppConfig });
+  try {
+    // 判断 $APPCONFIG 路径是否存在
+    const dirExists = await exists('config', { dir: BaseDirectory.AppConfig });
+    if (!dirExists) {
+      await createDir('config', { dir: BaseDirectory.AppData, recursive: true });
+    }
+    return await writeTextFile('config/settings.json', JSON.stringify(settings), { dir: BaseDirectory.AppConfig });
+  } catch (error) {
+    console.error(error);
+  }
 }

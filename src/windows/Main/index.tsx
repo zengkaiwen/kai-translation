@@ -238,7 +238,7 @@ function App() {
       }
     });
 
-    listen(GlobalEvent.UPDATE_SETTINGS_CONFIG, (event) => {
+    listen(GlobalEvent.SETTINGS_UPDATED, (event) => {
       rConsoleLog(`设置项更新：${JSON.stringify(event.payload)}`);
       const settings = event.payload as Setting;
       loadSettings(settings);
