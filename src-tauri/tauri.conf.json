@@ -60,7 +60,7 @@
         "transparent": true,
         "alwaysOnTop": true,
         "decorations": false,
-        "visible": true,
+        "visible": false,
         "focus": true,
         "hiddenTitle": true
       }

@@ -18,6 +18,7 @@ import { SystemTrayPayload } from '@/common/systemtray.ts';
 import useSettingConfig from '@/hooks/useSettingConfig.ts';
 import { GlobalEvent } from '@/common/event';
 import { Setting } from '@/utils/settings';
+import useWindowVisible from './_hook/useWindowHide';
 
 const Wrapper = styled.div`
   overflow: hidden;
@@ -209,6 +210,7 @@ const observer = new ResizeObserver((entries) => {
 function App() {
   const settingWindowRef = React.useRef<WebviewWindow | null>(null);
   const { loadSettings } = useSettingConfig();
+  useWindowVisible();
 
   const copyText = useAutoCopyHook();
   useUpdateEffect(() => {
@@ -362,8 +364,8 @@ function App() {
         </div>
         <div className="right flex items-center">
           {/* <span className="i-carbon-time" title="历史记录" /> */}
-          <span className="i-carbon-settings" onClick={() => showSettingWindow()} title="设置" />
-          <span className="i-carbon-close-large icon" onClick={() => appWindow.hide()} title="隐藏窗口" />
+          <span className="i-carbon-settings" onClick={() => showSettingWindow()} title="偏好设置" />
+          <span className="i-carbon-close-large icon" onClick={() => appWindow.hide()} title="关闭窗口" />
         </div>
       </div>
       <main>

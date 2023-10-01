@@ -5,13 +5,21 @@ mod commands;
 mod constant;
 mod crawler;
 
+use rdev::{listen, EventType, Button};
 use tauri::{
     CustomMenuItem, Manager, SystemTray, SystemTrayEvent, SystemTrayMenu, SystemTrayMenuItem,
 };
+use mouse_position::mouse_position::Mouse;
 
 #[derive(Clone, serde::Serialize)]
-struct Payload {
+struct SystemTrayPayload {
     id: String,
+}
+
+#[derive(Clone, serde::Serialize)]
+struct  MousePayload {
+    x: i32,
+    y: i32,
 }
 
 fn main() {
@@ -38,7 +46,7 @@ fn main() {
                     std::process::exit(0);
                 }
                 _ => {
-                    app.emit_all("systemTray", Payload { id: id }).unwrap();
+                    app.emit_all("systemTray", SystemTrayPayload { id: id }).unwrap();
                 }
             },
             _ => {}
@@ -50,7 +58,33 @@ fn main() {
         ])
         .setup(|app| {
             // 隐藏MacOS程序坞上的图标
+            #[cfg(target_os = "macos")]
             app.set_activation_policy(tauri::ActivationPolicy::Accessory);
+
+            let app_handle = app.handle();
+
+            // 获取鼠标点击时的坐标，以事件方式传递给前端
+            std::thread::spawn(move || {
+                if let Err(error) = listen(move |event| {
+                    match event.event_type {
+                        EventType::ButtonPress(button) => {
+                            if Button::Left == button {
+                                let position = Mouse::get_mouse_position();
+                                match position {
+                                    Mouse::Position { x, y } => {
+                                        app_handle.clone().emit_all("mousePress", MousePayload{ x, y }).unwrap();
+                                    },
+                                    Mouse::Error => println!("error while getting mouse position"),
+                                }
+                            }
+                        },
+                        _ => (),
+                    }
+                }) {
+                    println!("error while listening: {:?}", error);
+                }
+            });
+
             Ok(())
         })
         .run(tauri::generate_context!())

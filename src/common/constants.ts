@@ -43,3 +43,8 @@ export const LanguageList: TLanguageItem[] = [
     name: '葡萄牙语',
   },
 ];
+
+export interface Position {
+  x: number;
+  y: number;
+}
