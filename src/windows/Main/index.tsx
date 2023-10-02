@@ -7,10 +7,10 @@ import { writeText } from '@tauri-apps/api/clipboard';
 import cls from 'classnames';
 import { toast } from 'react-hot-toast';
 
-import { LanguageList, TLanguageItem } from '@/common/constants';
+import { LanguageList, Official_Web_Url, TLanguageItem } from '@/common/constants';
 import Accordion from '@/components/Accordion/index.tsx';
 import IconSpin from '@/components/IconSpin/index.tsx';
-import { rConsoleLog, rTranslate } from '@/utils';
+import { openUrlByDefaultBrowser, rConsoleLog, rTranslate } from '@/utils';
 import Scrollbar from '@/components/Scrollbar/index.tsx';
 import useAutoCopyHook from './_hook/useAutoCopyHook';
 import { listen } from '@tauri-apps/api/event';
@@ -19,6 +19,8 @@ import useSettingConfig from '@/hooks/useSettingConfig.ts';
 import { GlobalEvent } from '@/common/event';
 import { Setting } from '@/utils/settings';
 import useWindowVisible from './_hook/useWindowHide';
+import { useAtom } from 'jotai';
+import { windowFixed } from '@/store';
 
 const Wrapper = styled.div`
   overflow: hidden;
@@ -34,6 +36,7 @@ const Wrapper = styled.div`
     background-color: #ffffff;
     cursor: move;
     .left {
+      cursor: pointer;
       gap: 10px;
       span + span {
         padding: 4px 6px;
@@ -51,6 +54,10 @@ const Wrapper = styled.div`
     background-color: #787878;
     color: #787878;
     &:hover {
+      background-color: #6659ea;
+      color: #6659ea;
+    }
+    &.active {
       background-color: #6659ea;
       color: #6659ea;
     }
@@ -208,6 +215,7 @@ const observer = new ResizeObserver((entries) => {
 });
 
 function App() {
+  const [atomWindowFixed, setAtomWindowFixed] = useAtom(windowFixed);
   const settingWindowRef = React.useRef<WebviewWindow | null>(null);
   const { loadSettings } = useSettingConfig();
   useWindowVisible();
@@ -358,14 +366,20 @@ function App() {
   return (
     <Wrapper>
       <div className="toolbar flex items-center justify-between" data-tauri-drag-region>
-        <div className="left flex items-center">
+        <div className="left flex items-center" onClick={() => openUrlByDefaultBrowser(Official_Web_Url)}>
           <span>Z.E.U.S</span>
-          <span>Beta</span>
+          <span>免费版</span>
         </div>
         <div className="right flex items-center">
           {/* <span className="i-carbon-time" title="历史记录" /> */}
           <span className="i-carbon-settings" onClick={() => showSettingWindow()} title="偏好设置" />
-          <span className="i-carbon-close-large icon" onClick={() => appWindow.hide()} title="关闭窗口" />
+          {
+            atomWindowFixed ? (
+              <span className="i-carbon-pin-filled icon active" onClick={() => setAtomWindowFixed(false)} title="窗口释放" />
+            ) : (
+              <span className="i-carbon-pin icon" onClick={() => setAtomWindowFixed(true)} title="窗口固定" />
+            )
+          }
         </div>
       </div>
       <main>

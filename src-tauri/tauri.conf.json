@@ -15,7 +15,8 @@
       "all": false,
       "shell": {
         "sidecar": true,
-        "scope": [{ "name": "binaries/autocopy", "sidecar": true }]
+        "scope": [{ "name": "binaries/autocopy", "sidecar": true }],
+        "open": true
       },
       "window": {
         "all": true

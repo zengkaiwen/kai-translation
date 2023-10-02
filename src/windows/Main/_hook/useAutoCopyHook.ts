@@ -2,8 +2,8 @@ import { register, isRegistered, unregister } from '@tauri-apps/api/globalShortc
 import { Command } from '@tauri-apps/api/shell';
 import { useMount, usePrevious, useUpdateEffect } from 'ahooks';
 import React from 'react';
-import { rConsoleLog } from '@/utils';
-import { appWindow } from '@tauri-apps/api/window';
+import { rConsoleLog, rGetMousePosition } from '@/utils';
+import { PhysicalPosition, appWindow } from '@tauri-apps/api/window';
 import { readText } from '@tauri-apps/api/clipboard';
 import { useAtomValue } from 'jotai';
 import { underlineOpened, underlineShortcut } from '@/store';
@@ -44,8 +44,11 @@ function useAutoCopyHook() {
       await autocopyRef.current?.execute();
       const isVisible = await appWindow.isVisible();
       if (!isVisible) {
-        appWindow.show();
-        appWindow.setFocus();
+        const res = await rGetMousePosition();
+        // rConsoleLog(`鼠标位置xxx：${res}`);
+        await appWindow.setPosition(new PhysicalPosition(res[0], res[1]));
+        await appWindow.show();
+        await appWindow.setFocus();
       }
       const res = await readText();
       if (res) {

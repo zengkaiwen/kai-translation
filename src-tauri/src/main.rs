@@ -56,6 +56,7 @@ fn main() {
         .invoke_handler(tauri::generate_handler![
             commands::alibaba_transform,
             commands::console_log,
+            commands::get_mouse_position,
         ])
         .setup(|app| {
             // 隐藏MacOS程序坞上的图标
@@ -66,27 +67,6 @@ fn main() {
             let app_handle = app.handle();
 
             // 获取鼠标点击时的坐标，以事件方式传递给前端
-            // std::thread::spawn(move || {
-            //     if let Err(error) = listen(move |event| {
-            //         match event.event_type {
-            //             EventType::ButtonPress(button) => {
-            //                 if Button::Left == button {
-            //                     let position = Mouse::get_mouse_position();
-            //                     match position {
-            //                         Mouse::Position { x, y } => {
-            //                             app_handle.clone().emit_all("mousePress", MousePayload{ x, y }).unwrap();
-            //                         },
-            //                         Mouse::Error => println!("error while getting mouse position"),
-            //                     }
-            //                 }
-            //             },
-            //             _ => (),
-            //         }
-            //     }) {
-            //         println!("error while listening: {:?}", error);
-            //     }
-            // });
-
             #[cfg(target_os = "windows")]
             tauri::async_runtime::spawn(async move {
                 listen(move |event| {

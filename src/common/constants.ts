@@ -1,3 +1,5 @@
+export const Official_Web_Url = 'https://www.zeusfy.top/';
+
 export type TLanguage = 'auto' | 'en' | 'zh' | 'de' | 'ja' | 'ko' | 'es' | 'pt' | 'th';
 
 export interface TLanguageItem {

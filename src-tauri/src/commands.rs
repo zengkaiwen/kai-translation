@@ -1,6 +1,6 @@
+use mouse_position::mouse_position::Mouse;
+
 use crate::{constant::TranslateQuery, crawler::alibaba};
-use std::{thread, time};
-use tauri::Window;
 
 #[tauri::command]
 pub async fn alibaba_transform(source: String, target: String, text: String) -> Result<String, ()> {
@@ -17,8 +17,21 @@ pub async fn alibaba_transform(source: String, target: String, text: String) -> 
 }
 
 #[tauri::command]
-pub async fn console_log(text: String) {
+pub fn console_log(text: String) {
     println!("=====【Debug】=====");
     println!("{}", text);
     println!("==================");
+}
+
+#[tauri::command]
+pub async fn get_mouse_position() ->  Result<(i32, i32), ()>{
+    let position = Mouse::get_mouse_position();
+    match position {
+        Mouse::Position { x, y } => {
+            Ok((x, y))
+        },
+        Mouse::Error => {
+            Err(())
+        }
+    }
 }
