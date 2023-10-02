@@ -1,7 +1,7 @@
 import { Position } from '@/common/constants';
 import { GlobalEvent } from '@/common/event';
 import { rConsoleLog } from '@/utils';
-import { listen } from '@tauri-apps/api/event';
+import { TauriEvent, listen } from '@tauri-apps/api/event';
 import { appWindow } from '@tauri-apps/api/window';
 import { useMount } from 'ahooks';
 import * as React from 'react';
@@ -28,10 +28,17 @@ function useWindowVisible(): boolean {
   }, []);
 
   useMount(() => {
+    // windows 下监听窗口失去焦点
     listen(GlobalEvent.MOUSE_PRESS_POSITION, (e) => {
-      rConsoleLog(`鼠标按下位置，${JSON.stringify(e.payload)}`);
+      rConsoleLog(`【Win】鼠标按下位置，${JSON.stringify(e.payload)}`);
       const pos: Position = e.payload as Position;
       handleWindowHide(pos);
+    });
+
+    // macos 下监听窗口失去焦点
+    listen(TauriEvent.WINDOW_BLUR, () => {
+      // rConsoleLog('窗口失去焦点');
+      appWindow.hide();
     });
   });
 

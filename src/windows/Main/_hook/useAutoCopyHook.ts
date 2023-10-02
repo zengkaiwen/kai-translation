@@ -45,6 +45,7 @@ function useAutoCopyHook() {
       const isVisible = await appWindow.isVisible();
       if (!isVisible) {
         appWindow.show();
+        appWindow.setFocus();
       }
       const res = await readText();
       if (res) {

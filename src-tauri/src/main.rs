@@ -5,10 +5,12 @@ mod commands;
 mod constant;
 mod crawler;
 
-use rdev::{listen, EventType, Button};
 use tauri::{
     CustomMenuItem, Manager, SystemTray, SystemTrayEvent, SystemTrayMenu, SystemTrayMenuItem,
 };
+#[cfg(target_os = "windows")]
+use rdev::{listen, EventType, Button};
+#[cfg(target_os = "windows")]
 use mouse_position::mouse_position::Mouse;
 
 #[derive(Clone, serde::Serialize)]
@@ -54,18 +56,40 @@ fn main() {
         .invoke_handler(tauri::generate_handler![
             commands::alibaba_transform,
             commands::console_log,
-            commands::shortcut_control,
         ])
         .setup(|app| {
             // 隐藏MacOS程序坞上的图标
             #[cfg(target_os = "macos")]
             app.set_activation_policy(tauri::ActivationPolicy::Accessory);
 
+            #[cfg(target_os = "windows")]
             let app_handle = app.handle();
 
             // 获取鼠标点击时的坐标，以事件方式传递给前端
-            std::thread::spawn(move || {
-                if let Err(error) = listen(move |event| {
+            // std::thread::spawn(move || {
+            //     if let Err(error) = listen(move |event| {
+            //         match event.event_type {
+            //             EventType::ButtonPress(button) => {
+            //                 if Button::Left == button {
+            //                     let position = Mouse::get_mouse_position();
+            //                     match position {
+            //                         Mouse::Position { x, y } => {
+            //                             app_handle.clone().emit_all("mousePress", MousePayload{ x, y }).unwrap();
+            //                         },
+            //                         Mouse::Error => println!("error while getting mouse position"),
+            //                     }
+            //                 }
+            //             },
+            //             _ => (),
+            //         }
+            //     }) {
+            //         println!("error while listening: {:?}", error);
+            //     }
+            // });
+
+            #[cfg(target_os = "windows")]
+            tauri::async_runtime::spawn(async move {
+                listen(move |event| {
                     match event.event_type {
                         EventType::ButtonPress(button) => {
                             if Button::Left == button {
@@ -80,9 +104,7 @@ fn main() {
                         },
                         _ => (),
                     }
-                }) {
-                    println!("error while listening: {:?}", error);
-                }
+                }).unwrap();
             });
 
             Ok(())
