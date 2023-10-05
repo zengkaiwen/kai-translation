@@ -41,6 +41,7 @@
     "prettier": "^3.0.3",
     "typescript": "^5.0.2",
     "unocss": "^0.55.7",
-    "vite": "^4.4.4"
+    "vite": "^4.4.4",
+    "vite-plugin-require": "^1.1.11"
   }
 }

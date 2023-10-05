@@ -2,8 +2,10 @@ import { createRoot } from 'react-dom/client';
 import { Provider } from 'jotai';
 import { createHashRouter, RouterProvider } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
+import { initMonitors } from '@/utils/monitor';
 import Main from '@/windows/Main';
 import Setting from '@/windows/Setting';
+import About from './windows/About';
 
 import './reset.css';
 import './style.css';
@@ -22,7 +24,13 @@ const router = createHashRouter([
     path: '/setting',
     element: <Setting />,
   },
+  {
+    path: '/about',
+    element: <About />,
+  },
 ]);
+
+initMonitors();
 
 root.render(
   <Provider>

@@ -2,15 +2,15 @@
 import * as React from 'react';
 import { styled } from 'styled-components';
 import { useMount, useUnmount, useUpdateEffect } from 'ahooks';
-import { LogicalSize, appWindow, WebviewWindow } from '@tauri-apps/api/window';
+import { LogicalSize, appWindow, WebviewWindow, getAll } from '@tauri-apps/api/window';
 import { writeText } from '@tauri-apps/api/clipboard';
 import cls from 'classnames';
 import { toast } from 'react-hot-toast';
 
-import { LanguageList, Official_Web_Url, TLanguageItem } from '@/common/constants';
+import { LanguageList, Official_Web_Url, TLanguage, TLanguageItem } from '@/common/constants';
 import Accordion from '@/components/Accordion/index.tsx';
 import IconSpin from '@/components/IconSpin/index.tsx';
-import { openUrlByDefaultBrowser, rConsoleLog, rTranslate } from '@/utils';
+import { getTextLang, openUrlByDefaultBrowser, rConsoleLog, rTranslate } from '@/utils';
 import Scrollbar from '@/components/Scrollbar/index.tsx';
 import useAutoCopyHook from './_hook/useAutoCopyHook';
 import { listen } from '@tauri-apps/api/event';
@@ -19,8 +19,8 @@ import useSettingConfig from '@/hooks/useSettingConfig.ts';
 import { GlobalEvent } from '@/common/event';
 import { Setting } from '@/utils/settings';
 import useWindowVisible from './_hook/useWindowHide';
-import { useAtom } from 'jotai';
-import { windowFixed } from '@/store';
+import { useAtom, useAtomValue } from 'jotai';
+import { mainLanguage, subLanguage, windowFixed } from '@/store';
 
 const Wrapper = styled.div`
   overflow: hidden;
@@ -216,15 +216,29 @@ const observer = new ResizeObserver((entries) => {
 
 function App() {
   const [atomWindowFixed, setAtomWindowFixed] = useAtom(windowFixed);
+  const atomMainLanguage = useAtomValue(mainLanguage);
+  const atomSubLanguage = useAtomValue(subLanguage);
   const settingWindowRef = React.useRef<WebviewWindow | null>(null);
   const { loadSettings } = useSettingConfig();
-  useWindowVisible();
 
+  // =================================
+  // 监听划词翻译快捷键，当有文本变动时，触发
+  // =================================
   const copyText = useAutoCopyHook();
   useUpdateEffect(() => {
     setText(copyText);
     handleTranslate(copyText);
   }, [copyText]);
+
+  // =================================
+  // 监听窗口自动关闭，当窗口关闭时，清空原文
+  // =================================
+  const isVisible = useWindowVisible();
+  useUpdateEffect(() => {
+    if (!isVisible) {
+      setText('');
+    }
+  }, [isVisible]);
 
   useMount(() => {
     // 将body元素添加到观察者中
@@ -235,8 +249,6 @@ function App() {
       const { id } = event.payload as SystemTrayPayload;
       rConsoleLog(`systemTray item click, id: ${id}`);
       switch (id) {
-        case 'quit':
-          break;
         case 'show':
           appWindow.show();
           break;
@@ -244,6 +256,7 @@ function App() {
           showSettingWindow();
           break;
         case 'about':
+          showAboutWindow();
           break;
       }
     });
@@ -265,7 +278,7 @@ function App() {
 
   // 语言类型
   const [sourceLang, setSourceLang] = React.useState<TLanguageItem>(LanguageList[0]);
-  const [targetLang, setTargetLang] = React.useState<TLanguageItem>(LanguageList[2]);
+  const [targetLang, setTargetLang] = React.useState<TLanguageItem>(LanguageList[0]);
   const [openSourcePanel, setOpenSourcePanel] = React.useState<boolean>(false);
   const [openTargetPanel, setOpenTargetPanel] = React.useState<boolean>(false);
 
@@ -291,6 +304,28 @@ function App() {
   const [openResult, setOpenResult] = React.useState<boolean>(false);
   const [loading, setLoading] = React.useState<boolean>(false);
 
+  /**
+   * 获取本次翻译的原始与目标语言类型
+   */
+  const sourceTargetLang = React.useCallback(
+    async (_sourceText: string): Promise<[TLanguage, TLanguage]> => {
+      const sourceL = await getTextLang(_sourceText);
+      // 识别出来了，且是主语言，当目标语言是自动的话，目标语言设置成副语言
+      if (sourceL !== 'auto' && sourceL === atomMainLanguage && targetLang.key === 'auto') {
+        return [sourceL, atomSubLanguage];
+      }
+      // 识别出来了，且不是主语言，目标语言为自动的话，目标语言设置成主语言
+      if (sourceL !== 'auto' && sourceL !== atomMainLanguage && targetLang.key === 'auto') {
+        return [sourceL, atomMainLanguage];
+      }
+      if (targetLang.key === 'auto') {
+        return [sourceLang.key, atomMainLanguage];
+      }
+      return [sourceLang.key, targetLang.key];
+    },
+    [atomMainLanguage, atomSubLanguage, sourceLang.key, targetLang.key],
+  );
+
   const handleTranslate = React.useCallback(
     async (_text?: string) => {
       const sourceText = _text || text;
@@ -308,17 +343,15 @@ function App() {
       }
       setLoading(true);
       setOpenResult(true);
+      const [sourceLang, targetLang] = await sourceTargetLang(sourceText);
+      console.log('sourceLang, targetLang', sourceLang, targetLang);
       try {
-        const transResult: string = await rTranslate(
-          sourceLang.key,
-          targetLang.key === 'auto' ? 'zh' : targetLang.key,
-          sourceText,
-        );
+        const transResult: string = await rTranslate(sourceLang, targetLang, sourceText);
         setTranslateText(transResult || '');
       } catch (error) {}
       setLoading(false);
     },
-    [openSourcePanel, openTargetPanel, sourceLang.key, targetLang.key, text],
+    [openSourcePanel, openTargetPanel, sourceTargetLang, text],
   );
 
   const handleEnter = React.useCallback(
@@ -357,10 +390,34 @@ function App() {
       focus: true,
       hiddenTitle: true,
       width: 480,
-      height: 320,
+      height: 480,
       alwaysOnTop: true,
     });
     settingWindowRef.current = settingWindow;
+  }, []);
+
+  // ==============
+  // 打开关于窗口
+  // ==============
+  const showAboutWindow = React.useCallback(() => {
+    const allWindow = getAll();
+    const aboutWindow = allWindow.find((item) => item.label === 'about');
+    if (aboutWindow) {
+      aboutWindow.show();
+      aboutWindow.setFocus();
+      return;
+    }
+    new WebviewWindow('about', {
+      url: '#/about',
+      fullscreen: false,
+      resizable: false,
+      title: '关于',
+      transparent: false,
+      visible: true,
+      focus: true,
+      width: 320,
+      height: 420,
+    });
   }, []);
 
   return (
@@ -373,13 +430,15 @@ function App() {
         <div className="right flex items-center">
           {/* <span className="i-carbon-time" title="历史记录" /> */}
           <span className="i-carbon-settings" onClick={() => showSettingWindow()} title="偏好设置" />
-          {
-            atomWindowFixed ? (
-              <span className="i-carbon-pin-filled icon active" onClick={() => setAtomWindowFixed(false)} title="窗口释放" />
-            ) : (
-              <span className="i-carbon-pin icon" onClick={() => setAtomWindowFixed(true)} title="窗口固定" />
-            )
-          }
+          {atomWindowFixed ? (
+            <span
+              className="i-carbon-pin-filled icon active"
+              onClick={() => setAtomWindowFixed(false)}
+              title="窗口释放"
+            />
+          ) : (
+            <span className="i-carbon-pin icon" onClick={() => setAtomWindowFixed(true)} title="窗口固定" />
+          )}
         </div>
       </div>
       <main>
@@ -424,7 +483,7 @@ function App() {
                   <div
                     className={cls('flex items-center', {
                       open: sourceLang.key === lang.key,
-                      disabled: targetLang.key === lang.key,
+                      disabled: targetLang.key === lang.key && lang.key !== 'auto',
                     })}
                     key={lang.key}
                     onClick={() => setSourceLang(lang)}
@@ -441,7 +500,7 @@ function App() {
                   <div
                     className={cls('flex items-center', {
                       open: targetLang.key === lang.key,
-                      disabled: sourceLang.key === lang.key,
+                      disabled: sourceLang.key === lang.key && lang.key !== 'auto',
                     })}
                     key={lang.key}
                     onClick={() => setTargetLang(lang)}

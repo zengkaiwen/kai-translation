@@ -1,4 +1,5 @@
 use mouse_position::mouse_position::Mouse;
+use whatlang::detect;
 
 use crate::{constant::TranslateQuery, crawler::alibaba};
 
@@ -34,4 +35,10 @@ pub async fn get_mouse_position() ->  Result<(i32, i32), ()>{
             Err(())
         }
     }
+}
+
+#[tauri::command]
+pub async fn get_text_lang(text: String) -> Result<String, ()> {
+    let info = detect(&text).unwrap();
+    Ok(info.lang().code().to_string())
 }

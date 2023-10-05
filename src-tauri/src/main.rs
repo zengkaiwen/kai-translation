@@ -57,6 +57,7 @@ fn main() {
             commands::alibaba_transform,
             commands::console_log,
             commands::get_mouse_position,
+            commands::get_text_lang,
         ])
         .setup(|app| {
             // 隐藏MacOS程序坞上的图标

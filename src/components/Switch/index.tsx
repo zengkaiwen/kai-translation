@@ -26,12 +26,12 @@ const Wrapper = styled(RcSwitch)`
   position: relative;
   display: inline-block;
   box-sizing: border-box;
-  width: 36px;
-  height: 18px;
-  line-height: 16px;
+  width: 40px;
+  height: 20px;
+  line-height: 18px;
   padding: 0;
   vertical-align: middle;
-  border-radius: 16px 16px;
+  border-radius: 10px;
   border: 1px solid #d2d2d2;
   background-color: #e5e5e5;
   cursor: pointer;
@@ -40,7 +40,7 @@ const Wrapper = styled(RcSwitch)`
 
   .rc-switch-inner-checked,
   .rc-switch-inner-unchecked {
-    font-size: 11px;
+    font-size: 12px;
     position: absolute;
     top: 0;
     transition: left 0.3s cubic-bezier(0.35, 0, 0.25, 1);
@@ -53,13 +53,13 @@ const Wrapper = styled(RcSwitch)`
 
   .rc-switch-inner-unchecked {
     color: #9c9c9c;
-    left: 18px;
+    left: 20px;
   }
 
   &:after {
     position: absolute;
-    width: 14px;
-    height: 14px;
+    width: 16px;
+    height: 16px;
     left: 1px;
     top: 1px;
     border-radius: 50% 50%;
@@ -89,7 +89,7 @@ const Wrapper = styled(RcSwitch)`
     background-color: #6659ea;
 
     &:after {
-      left: 20px;
+      left: 21px;
     }
 
     .rc-switch-inner-checked {
@@ -97,7 +97,7 @@ const Wrapper = styled(RcSwitch)`
     }
 
     .rc-switch-inner-unchecked {
-      left: 44px;
+      left: 46px;
     }
   }
 
@@ -120,7 +120,7 @@ const Wrapper = styled(RcSwitch)`
 
   .rc-switch-label {
     display: inline-block;
-    line-height: 20px;
+    line-height: 22px;
     font-size: 14px;
     padding-left: 10px;
     vertical-align: middle;

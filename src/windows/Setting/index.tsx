@@ -1,16 +1,20 @@
+import * as React from 'react';
 import styled from 'styled-components';
 import { appWindow } from '@tauri-apps/api/window';
 import Scrollbar from '@/components/Scrollbar';
 import Switch from '@/components/Switch';
 import ShortcutInput from '@/components/ShortcutInput';
 import { useAtom } from 'jotai';
-import { underlineOpened, underlineShortcut } from '@/store';
+import { mainLanguage, subLanguage, underlineOpened, underlineShortcut } from '@/store';
 import useSettingConfig from '@/hooks/useSettingConfig';
 import { useThrottleEffect } from 'ahooks';
+import { LanguageList } from '@/common/constants';
+import Select, { SelectOption } from '@/components/Select';
+import { toast } from 'react-hot-toast';
 
 const Wrapper = styled.div`
   width: 480px;
-  height: 320px;
+  height: 480px;
   overflow: hidden;
   border-radius: 10px;
   border: 1px solid #e5e5e5;
@@ -18,8 +22,7 @@ const Wrapper = styled.div`
   box-sizing: border-box;
 
   .toolbar {
-    margin: 4px 12px;
-    padding: 8px 10px;
+    padding: 12px 22px;
     background-color: #ffffff;
     cursor: move;
     .left {
@@ -47,7 +50,7 @@ const Wrapper = styled.div`
 
   main {
     overflow-x: hidden;
-    max-height: calc(320px - 44px);
+    height: calc(480px - 40px);
     .ms-container {
       max-height: inherit;
     }
@@ -69,6 +72,7 @@ const Wrapper = styled.div`
         p.tip {
           margin-top: 8px;
           font-size: 12px;
+          line-height: 14px;
           color: #7c7c7c;
         }
       }
@@ -86,21 +90,64 @@ const Setting = () => {
   const { settings, saveSettings } = useSettingConfig();
   const [atomUnderlineOpened, setAtomUnderlineOpened] = useAtom(underlineOpened);
   const [atomUnderlineShortcut, setAtomUnderlineShortcut] = useAtom(underlineShortcut);
+  const [atomMainLanguage, setAtomMainLanguage] = useAtom(mainLanguage);
+  const [atomSubLanguage, setAtomSubLanguage] = useAtom(subLanguage);
 
   useThrottleEffect(
     () => {
       if (!settings) return;
-      saveSettings({
+      const settingsParams = {
         ...settings,
         underline: atomUnderlineOpened,
         underlineShortcut: atomUnderlineShortcut,
-      });
+      };
+      if (atomMainLanguage !== atomSubLanguage) {
+        settingsParams.mainLanguage = atomMainLanguage;
+        settingsParams.subLanguage = atomSubLanguage;
+      }
+      saveSettings(settingsParams);
     },
-    [atomUnderlineOpened, atomUnderlineShortcut, settings],
+    [atomUnderlineOpened, atomUnderlineShortcut, settings, atomMainLanguage, atomSubLanguage],
     {
       wait: 1000,
       trailing: true,
     },
+  );
+
+  const memoLanguageList = React.useMemo<SelectOption[]>(() => {
+    const list = LanguageList.slice(1);
+    return list.map((item) => ({
+      value: item.key,
+      label: item.name,
+    }));
+  }, []);
+
+  const mainLanguageOption = React.useMemo<SelectOption | undefined>(() => {
+    return memoLanguageList.find((item) => item.value === atomMainLanguage);
+  }, [atomMainLanguage, memoLanguageList]);
+
+  const subLanguageOption = React.useMemo<SelectOption | undefined>(() => {
+    return memoLanguageList.find((item) => item.value === atomSubLanguage);
+  }, [atomSubLanguage, memoLanguageList]);
+
+  const handleMainLangChange = React.useCallback(
+    (option: SelectOption) => {
+      if (option.value === atomSubLanguage) {
+        toast.error('与副语言相同，注意主副语言不能一致');
+      }
+      setAtomMainLanguage(option.value);
+    },
+    [atomSubLanguage, setAtomMainLanguage],
+  );
+
+  const handleSubLangChange = React.useCallback(
+    (option: SelectOption) => {
+      if (option.value === atomMainLanguage) {
+        toast.error('与主语言相同，注意主副语言不能一致');
+      }
+      setAtomSubLanguage(option.value);
+    },
+    [atomMainLanguage, setAtomSubLanguage],
   );
 
   return (
@@ -118,6 +165,22 @@ const Setting = () => {
       {settings && (
         <main>
           <Scrollbar>
+            <ul>
+              <li className="flex items-center justify-between">
+                <div>
+                  <h5>主语言</h5>
+                  <p className="tip">目标语言为自动时，自动翻译成主语言</p>
+                </div>
+                <Select options={memoLanguageList} value={mainLanguageOption} onChange={handleMainLangChange} />
+              </li>
+              <li className="flex items-center justify-between">
+                <div>
+                  <h5>副语言</h5>
+                  <p className="tip">原始语言为主语言，且目标语言为自动，自动翻译成副语言</p>
+                </div>
+                <Select options={memoLanguageList} value={subLanguageOption} onChange={handleSubLangChange} />
+              </li>
+            </ul>
             <ul>
               <li className="flex items-center justify-between">
                 <div>
@@ -147,26 +210,6 @@ const Setting = () => {
                 </div>
               </li>
             </ul>
-            {/* <ul>
-            <li className="flex items-center justify-between">
-              <div>
-                <h5>主副逻辑</h5>
-              </div>
-              <div>1</div>
-            </li>
-            <li className="flex items-center justify-between">
-              <div>
-                <h5>主语言</h5>
-              </div>
-              <div>1</div>
-            </li>
-            <li className="flex items-center justify-between">
-              <div>
-                <h5>副语言</h5>
-              </div>
-              <div>1</div>
-            </li>
-          </ul> */}
           </Scrollbar>
         </main>
       )}

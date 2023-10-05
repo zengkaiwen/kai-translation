@@ -1,3 +1,4 @@
+import { TLanguage } from '@/common/constants';
 import { atom } from 'jotai';
 
 /** 是否固定，固定之后的话，点击窗口其他位置，窗口不会隐藏 */
@@ -10,7 +11,7 @@ export const underlineOpened = atom<boolean>(false);
 export const underlineShortcut = atom<string>('');
 
 /** 翻译类型的主语言 */
-export const mainLanguage = atom<string>('');
+export const mainLanguage = atom<TLanguage>('auto');
 
 /** 翻译类型的副语言 */
-export const subLanguage = atom<string>('');
+export const subLanguage = atom<TLanguage>('auto');
