@@ -159,6 +159,7 @@ const Portal: React.FC<TriggerProps> = (props: TriggerProps) => {
 
   const filterPosition = React.useCallback(
     (space: DOMRect, inside: DOMRect) => {
+      console.log(inside);
       const { width: followWidth, height: followHeight } = space;
       const rectSize: PositionProps = {
         top: followHeight + 4,

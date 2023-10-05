@@ -215,7 +215,7 @@ const ShortcutInput: React.FC<ShortcutInputProps> = ({ value, onChange, ...rest 
 
   const handleKeyUp: React.KeyboardEventHandler<HTMLInputElement> = React.useCallback(
     (e) => {
-      // console.log('抬起');
+      console.log('抬起', e);
       const funcKeyIsDown =
         shiftKey ||
         ctrlKey ||
