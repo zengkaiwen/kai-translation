@@ -169,14 +169,14 @@ const Setting = () => {
               <li className="flex items-center justify-between">
                 <div>
                   <h5>主语言</h5>
-                  <p className="tip">目标语言为自动时，自动翻译成主语言</p>
+                  <p className="tip">目标语言为自动时，默认翻译成主语言</p>
                 </div>
                 <Select options={memoLanguageList} value={mainLanguageOption} onChange={handleMainLangChange} />
               </li>
               <li className="flex items-center justify-between">
                 <div>
                   <h5>副语言</h5>
-                  <p className="tip">原始语言为主语言，且目标语言为自动，自动翻译成副语言</p>
+                  <p className="tip">原文为主语言，且目标语言为自动时，翻译成副语言</p>
                 </div>
                 <Select options={memoLanguageList} value={subLanguageOption} onChange={handleSubLangChange} />
               </li>

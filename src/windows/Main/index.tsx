@@ -528,7 +528,9 @@ function App() {
                     <IconSpin />
                   </div>
                 )}
-                {!loading && translateText && <div className="content">{translateText}</div>}
+                {!loading && translateText && (
+                  <div className="content" dangerouslySetInnerHTML={{ __html: translateText }} />
+                )}
                 {!loading && !translateText && <div className="empty">{text ? '啊呜~ 出错啦' : '没有需翻译内容'}</div>}
                 {translateText && (
                   <div className="footer flex items-center justify-end">

@@ -17,6 +17,9 @@ const Wrapper = styled.div`
     font-weight: 300;
     color: #595959;
     cursor: pointer;
+    small {
+      font-size: 12px;
+    }
   }
   h2 {
     margin: 10px 0 30px;
@@ -39,7 +42,9 @@ const About = () => {
         alt="logo"
         onClick={() => openUrlByDefaultBrowser(Official_Web_Url)}
       />
-      <h1 onClick={() => openUrlByDefaultBrowser(Official_Web_Url)}>Z.E.U.S</h1>
+      <h1 onClick={() => openUrlByDefaultBrowser(Official_Web_Url)}>
+        Z.E.U.S <small>v0.0.3</small>
+      </h1>
       <h2>一款小巧且精美的划词翻译软件</h2>
       <p>
         官网：<a>https://www.zeusfy.top/</a>
