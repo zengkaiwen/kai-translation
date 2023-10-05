@@ -8,16 +8,15 @@
   },
   "package": {
     "productName": "zeus",
-    "version": "0.0.2"
+    "version": "0.0.3"
   },
   "tauri": {
     "allowlist": {
       "all": false,
       "shell": {
         "sidecar": true,
-        "scope": [
-          { "name": "binaries/autocopy", "sidecar": true }
-        ]
+        "scope": [{ "name": "binaries/autocopy", "sidecar": true }],
+        "open": true
       },
       "window": {
         "all": true
@@ -27,6 +26,16 @@
       },
       "clipboard": {
         "all": true
+      },
+      "fs": {
+        "all": true,
+        "scope": ["$APPCONFIG/**"]
+      },
+      "path": {
+        "all": true
+      },
+      "os": {
+        "all": true
       }
     },
     "bundle": {
@@ -34,9 +43,8 @@
       "targets": "all",
       "identifier": "top.kevin-zeus.zeus",
       "icon": ["icons/32x32.png", "icons/128x128.png", "icons/128x128@2x.png", "icons/icon.icns", "icons/icon.ico"],
-      "externalBin": [
-        "binaries/autocopy"
-      ]
+      "externalBin": ["binaries/autocopy"],
+      "resources": []
     },
     "security": {
       "csp": null
@@ -49,11 +57,18 @@
         "title": "zeus",
         "width": 420,
         "height": 276,
+        "skipTaskbar": true,
         "transparent": true,
         "alwaysOnTop": true,
         "decorations": false,
-        "visible": false
+        "visible": false,
+        "focus": true,
+        "hiddenTitle": true
       }
-    ]
+    ],
+    "systemTray": {
+      "iconPath": "icons/128x128@2x.png",
+      "iconAsTemplate": true
+    }
   }
 }

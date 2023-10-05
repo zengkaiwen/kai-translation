@@ -1,7 +1,7 @@
 [package]
 name = "zeus"
-version = "0.0.2"
-description = "A Tauri App"
+version = "0.0.3"
+description = "一个方便小巧的翻译软件"
 authors = ["kevin"]
 license = ""
 repository = ""
@@ -13,16 +13,15 @@ edition = "2021"
 tauri-build = { version = "1.4", features = [] }
 
 [dependencies]
-tauri = { version = "1.4", features = [ "clipboard-all", "shell-sidecar", "global-shortcut-all", "window-all", "macos-private-api"] }
+tauri = { version = "1.4", features = [ "shell-open", "path-all", "os-all", "fs-all", "system-tray", "clipboard-all", "shell-sidecar", "global-shortcut-all", "window-all", "macos-private-api"] }
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
 reqwest = { version = "0.11.20", features = ["json", "multipart"] }
 tokio = { version = "1", features = ["full"] }
-rand_user_agent = "0.1.0"
 anyhow = "1.0.75"
 rdev = "0.5.3"
-enigo = {git = "https://github.com/enigo-rs/enigo"}
 mouse_position = "0.1.3"
+whatlang = "0.16.3"
 
 [features]
 # this feature is used for production builds or when `devPath` points to the filesystem

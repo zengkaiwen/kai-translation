@@ -1,4 +1,8 @@
-export type TLanguage = 'auto' | 'en' | 'zh' | 'de' | 'ja' | 'ko' | 'es' | 'pt' | 'th';
+export const Official_Web_Url = 'https://www.zeusfy.top/';
+
+export type TLanguage = 'auto' | 'en' | 'zh' | 'de' | 'ja' | 'ko' | 'es' | 'pt' | 'th' | 'ru';
+
+export type TCode = 'eng' | 'cmn' | 'deu' | 'jpn' | 'kor' | 'spa' | 'por' | 'tha' | 'rus';
 
 export interface TLanguageItem {
   key: TLanguage;
@@ -35,6 +39,10 @@ export const LanguageList: TLanguageItem[] = [
     name: '泰语',
   },
   {
+    key: 'ru',
+    name: '俄语',
+  },
+  {
     key: 'es',
     name: '西班牙语',
   },
@@ -43,3 +51,20 @@ export const LanguageList: TLanguageItem[] = [
     name: '葡萄牙语',
   },
 ];
+
+export interface Position {
+  x: number;
+  y: number;
+}
+
+export const Code2Language: Record<TCode, TLanguage> = {
+  cmn: 'zh',
+  eng: 'en',
+  deu: 'de',
+  jpn: 'ja',
+  kor: 'ko',
+  tha: 'th',
+  spa: 'es',
+  por: 'pt',
+  rus: 'ru',
+};

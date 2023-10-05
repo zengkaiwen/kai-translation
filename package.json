@@ -1,31 +1,37 @@
 {
   "name": "zeus",
   "private": true,
-  "version": "0.0.2",
+  "version": "0.0.3",
   "type": "module",
   "scripts": {
     "autocopy": "node src/move-binary.js",
     "dev": "vite",
     "build": "pnpm run autocopy && tsc && vite build",
     "preview": "vite preview",
-    "tauri": "tauri"
+    "tauri": "tauri",
+    "doc": "docsify serve docs"
   },
   "dependencies": {
-    "@feb-team/legao-react": "0.2.8-pre.4",
     "@tauri-apps/api": "^1.4.0",
     "ahooks": "^3.7.8",
     "classnames": "^2.3.2",
-    "copy-to-clipboard": "^3.3.3",
     "framer-motion": "^10.16.4",
+    "jotai": "^2.4.2",
+    "lodash": "^4.17.21",
     "mac-scrollbar": "^0.10.4",
+    "rc-switch": "^4.1.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "react-hot-toast": "^2.4.1",
+    "react-router-dom": "^6.16.0",
     "styled-components": "^6.0.7"
   },
   "devDependencies": {
     "@applint/spec": "^1.2.3",
     "@iconify-json/carbon": "^1.1.21",
     "@tauri-apps/cli": "^1.4.0",
+    "@types/lodash": "^4.14.199",
+    "@types/node": "^20.7.0",
     "@types/react": "^18.2.15",
     "@types/react-dom": "^18.2.7",
     "@unocss/preset-icons": "^0.55.7",
@@ -35,6 +41,7 @@
     "prettier": "^3.0.3",
     "typescript": "^5.0.2",
     "unocss": "^0.55.7",
-    "vite": "^4.4.4"
+    "vite": "^4.4.4",
+    "vite-plugin-require": "^1.1.11"
   }
 }
