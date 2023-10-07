@@ -58,6 +58,7 @@ fn main() {
             commands::console_log,
             commands::get_mouse_position,
             commands::get_text_lang,
+            commands::auto_copy,
         ])
         .setup(|app| {
             // 隐藏MacOS程序坞上的图标

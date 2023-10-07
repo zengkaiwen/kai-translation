@@ -22,6 +22,11 @@ export function rGetMousePosition() {
   return invoke('get_mouse_position') as Promise<[number, number]>;
 }
 
+/** 自动执行 ctrl+c 复制文案 */
+export const rAutoCopy = async () => {
+  return invoke('auto_copy');
+};
+
 /** 获取唯一 uuid */
 export const uuidv4 = () => {
   const UINT36 = '10000000-1000-4000-8000-100000000000';
