@@ -425,7 +425,7 @@ function App() {
       <div className="toolbar flex items-center justify-between" data-tauri-drag-region>
         <div className="left flex items-center" onClick={() => openUrlByDefaultBrowser(Official_Web_Url)}>
           <span>Z.E.U.S</span>
-          <span>免费版</span>
+          {/* <span>免费版</span> */}
         </div>
         <div className="right flex items-center">
           {/* <span className="i-carbon-time" title="历史记录" /> */}
