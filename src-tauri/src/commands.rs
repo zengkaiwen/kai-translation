@@ -39,7 +39,7 @@ pub async fn get_text_lang(text: String) -> Result<String, ()> {
 
 #[tauri::command]
 pub async fn auto_copy() {
-    thread::sleep(time::Duration::from_millis(200));
+    thread::sleep(time::Duration::from_millis(400));
 
     #[cfg(target_os = "windows")]
     send(&EventType::KeyPress(Key::ControlLeft));
@@ -53,6 +53,4 @@ pub async fn auto_copy() {
     send(&EventType::KeyRelease(Key::ControlLeft));
     #[cfg(target_os = "macos")]
     send(&EventType::KeyRelease(Key::MetaLeft));
-
-    thread::sleep(time::Duration::from_millis(50));
 }
