@@ -2,16 +2,14 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
 mod commands;
-mod constant;
-mod crawler;
 
+#[cfg(target_os = "windows")]
+use mouse_position::mouse_position::Mouse;
+#[cfg(target_os = "windows")]
+use rdev::{listen, Button, EventType};
 use tauri::{
     CustomMenuItem, Manager, SystemTray, SystemTrayEvent, SystemTrayMenu, SystemTrayMenuItem,
 };
-#[cfg(target_os = "windows")]
-use rdev::{listen, EventType, Button};
-#[cfg(target_os = "windows")]
-use mouse_position::mouse_position::Mouse;
 
 #[derive(Clone, serde::Serialize)]
 struct SystemTrayPayload {
@@ -19,7 +17,7 @@ struct SystemTrayPayload {
 }
 
 #[derive(Clone, serde::Serialize)]
-struct  MousePayload {
+struct MousePayload {
     x: i32,
     y: i32,
 }
@@ -48,13 +46,13 @@ fn main() {
                     std::process::exit(0);
                 }
                 _ => {
-                    app.emit_all("systemTray", SystemTrayPayload { id: id }).unwrap();
+                    app.emit_all("systemTray", SystemTrayPayload { id: id })
+                        .unwrap();
                 }
             },
             _ => {}
         })
         .invoke_handler(tauri::generate_handler![
-            commands::alibaba_transform,
             commands::console_log,
             commands::get_mouse_position,
             commands::get_text_lang,
@@ -71,22 +69,24 @@ fn main() {
             // 获取鼠标点击时的坐标，以事件方式传递给前端
             #[cfg(target_os = "windows")]
             tauri::async_runtime::spawn(async move {
-                listen(move |event| {
-                    match event.event_type {
-                        EventType::ButtonPress(button) => {
-                            if Button::Left == button {
-                                let position = Mouse::get_mouse_position();
-                                match position {
-                                    Mouse::Position { x, y } => {
-                                        app_handle.clone().emit_all("mousePress", MousePayload{ x, y }).unwrap();
-                                    },
-                                    Mouse::Error => println!("error while getting mouse position"),
+                listen(move |event| match event.event_type {
+                    EventType::ButtonPress(button) => {
+                        if Button::Left == button {
+                            let position = Mouse::get_mouse_position();
+                            match position {
+                                Mouse::Position { x, y } => {
+                                    app_handle
+                                        .clone()
+                                        .emit_all("mousePress", MousePayload { x, y })
+                                        .unwrap();
                                 }
+                                Mouse::Error => println!("error while getting mouse position"),
                             }
-                        },
-                        _ => (),
+                        }
                     }
-                }).unwrap();
+                    _ => (),
+                })
+                .unwrap();
             });
 
             Ok(())

@@ -10,7 +10,7 @@ import { toast } from 'react-hot-toast';
 import { LanguageList, Official_Web_Url, TLanguage, TLanguageItem } from '@/common/constants';
 import Accordion from '@/components/Accordion/index.tsx';
 import IconSpin from '@/components/IconSpin/index.tsx';
-import { getTextLang, openUrlByDefaultBrowser, rConsoleLog, rTranslate } from '@/utils';
+import { getTextLang, openUrlByDefaultBrowser, rConsoleLog } from '@/utils';
 import Scrollbar from '@/components/Scrollbar/index.tsx';
 import useAutoCopyHook from './_hook/useAutoCopyHook';
 import { listen } from '@tauri-apps/api/event';
@@ -21,6 +21,8 @@ import { Setting } from '@/utils/settings';
 import useWindowVisible from './_hook/useWindowHide';
 import { useAtom, useAtomValue } from 'jotai';
 import { mainLanguage, subLanguage, windowFixed } from '@/store';
+import * as Alibaba from '@/services/translate/alibaba';
+import * as Huoshan from '@/services/translate/huoshan';
 
 const Wrapper = styled.div`
   overflow: hidden;
@@ -237,6 +239,7 @@ function App() {
   useUpdateEffect(() => {
     if (!isVisible) {
       setText('');
+      setTranslateText('');
     }
   }, [isVisible]);
 
@@ -346,8 +349,12 @@ function App() {
       const [sourceLang, targetLang] = await sourceTargetLang(sourceText);
       console.log('sourceLang, targetLang', sourceLang, targetLang);
       try {
-        const transResult: string = await rTranslate(sourceLang, targetLang, sourceText);
-        setTranslateText(transResult || '');
+        const translateResult = await Huoshan.translate({
+          source: sourceLang,
+          target: targetLang,
+          text: sourceText,
+        });
+        setTranslateText(translateResult);
       } catch (error) {}
       setLoading(false);
     },

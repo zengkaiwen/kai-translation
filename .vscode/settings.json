@@ -89,6 +89,9 @@
   },
   "[env]": {
     "editor.defaultFormatter": "IronGeek.vscode-env"
+  },
+  "[rust]": {
+    "editor.defaultFormatter": "rust-lang.rust-analyzer"
   }
   // ===========================================
   // ============= Other =======================

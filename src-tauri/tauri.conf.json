@@ -13,6 +13,14 @@
   "tauri": {
     "allowlist": {
       "all": false,
+      "http": {
+        "all": true,
+        "scope": [
+          "https://translate.alibaba.com/api/*",
+          "https://fanyi.qq.com/api/*",
+          "https://translate.volcengine.com/*"
+        ]
+      },
       "shell": {
         "open": true
       },

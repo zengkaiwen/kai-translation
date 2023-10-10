@@ -9,6 +9,12 @@ export interface TLanguageItem {
   name: React.ReactNode;
 }
 
+export interface ITranslateParams {
+  source: TLanguage;
+  target: TLanguage;
+  text: string;
+}
+
 export const LanguageList: TLanguageItem[] = [
   {
     key: 'auto',
