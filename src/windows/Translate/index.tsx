@@ -20,7 +20,7 @@ import { GlobalEvent } from '@/common/event';
 import { Setting } from '@/utils/settings';
 import useWindowVisible from './_hook/useWindowHide';
 import { useAtom, useAtomValue } from 'jotai';
-import { mainLanguage, subLanguage, windowFixed } from '@/store';
+import { mainLanguage, subLanguage, windowFixed } from '@/store/setting';
 import * as Alibaba from '@/services/translate/alibaba';
 import * as Huoshan from '@/services/translate/huoshan';
 

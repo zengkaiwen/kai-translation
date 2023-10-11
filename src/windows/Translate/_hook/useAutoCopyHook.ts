@@ -5,7 +5,7 @@ import { getOsType, rAutoCopy, rConsoleLog, rGetMousePosition } from '@/utils';
 import { PhysicalPosition, appWindow } from '@tauri-apps/api/window';
 import { readText } from '@tauri-apps/api/clipboard';
 import { useAtomValue } from 'jotai';
-import { underlineOpened, underlineShortcut } from '@/store';
+import { underlineOpened, underlineShortcut } from '@/store/setting';
 import { getCursorMonitorScaleFactor } from '@/utils/monitor';
 
 function useAutoCopyHook() {

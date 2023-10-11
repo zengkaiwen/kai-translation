@@ -1,9 +1,11 @@
+import * as React from 'react';
 import { createRoot } from 'react-dom/client';
 import { Provider } from 'jotai';
 import { createHashRouter, RouterProvider } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 import { initMonitors } from '@/utils/monitor';
-import Main from '@/windows/Translate';
+import ThemeProvider from './theme';
+import Translate from '@/windows/Translate';
 import Setting from '@/windows/Setting';
 import About from './windows/About';
 
@@ -18,7 +20,7 @@ const root = createRoot(container!);
 const router = createHashRouter([
   {
     path: '/',
-    element: <Main />,
+    element: <Translate />,
   },
   {
     path: '/setting',
@@ -34,15 +36,19 @@ initMonitors();
 
 root.render(
   <Provider>
-    <RouterProvider router={router} />
-    <Toaster
-      position="top-center"
-      gutter={4}
-      containerClassName="toast-panel"
-      toastOptions={{
-        className: 'toast',
-        duration: 2000,
-      }}
-    />
+    <ThemeProvider>
+      <React.Fragment>
+        <RouterProvider router={router} />
+        <Toaster
+          position="top-center"
+          gutter={4}
+          containerClassName="toast-panel"
+          toastOptions={{
+            className: 'toast',
+            duration: 2000,
+          }}
+        />
+      </React.Fragment>
+    </ThemeProvider>
   </Provider>,
 );

@@ -5,7 +5,7 @@ import Scrollbar from '@/components/Scrollbar';
 import Switch from '@/components/Switch';
 import ShortcutInput from '@/components/ShortcutInput';
 import { useAtom } from 'jotai';
-import { mainLanguage, subLanguage, underlineOpened, underlineShortcut } from '@/store';
+import { mainLanguage, subLanguage, underlineOpened, underlineShortcut } from '@/store/setting';
 import useSettingConfig from '@/hooks/useSettingConfig';
 import { useThrottleEffect } from 'ahooks';
 import { LanguageList } from '@/common/constants';

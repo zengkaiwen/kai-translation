@@ -2,7 +2,7 @@ import * as React from 'react';
 import { useMount } from 'ahooks';
 import { Setting, readSettings, writeSettings } from '@/utils/settings';
 import { useSetAtom } from 'jotai';
-import { mainLanguage, subLanguage, underlineOpened, underlineShortcut, windowFixed } from '@/store';
+import { mainLanguage, subLanguage, underlineOpened, underlineShortcut, windowFixed } from '@/store/setting';
 import { rConsoleLog } from '@/utils';
 import { emit } from '@tauri-apps/api/event';
 import { GlobalEvent } from '@/common/event';

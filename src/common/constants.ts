@@ -4,6 +4,8 @@ export type TLanguage = 'auto' | 'en' | 'zh' | 'de' | 'ja' | 'ko' | 'es' | 'pt' 
 
 export type TCode = 'eng' | 'cmn' | 'deu' | 'jpn' | 'kor' | 'spa' | 'por' | 'tha' | 'rus';
 
+export type TTheme = 'light' | 'dark';
+
 export interface TLanguageItem {
   key: TLanguage;
   name: React.ReactNode;
