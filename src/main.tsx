@@ -3,7 +3,7 @@ import { Provider } from 'jotai';
 import { createHashRouter, RouterProvider } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 import { initMonitors } from '@/utils/monitor';
-import Main from '@/windows/Main';
+import Main from '@/windows/Translate';
 import Setting from '@/windows/Setting';
 import About from './windows/About';
 
