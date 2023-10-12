@@ -7,7 +7,7 @@ import { writeText } from '@tauri-apps/api/clipboard';
 import cls from 'classnames';
 import { toast } from 'react-hot-toast';
 
-import { LanguageList, Official_Web_Url, TLanguage, TLanguageItem } from '@/common/constants';
+import { LanguageList, Official_Web_Url, TLanguage, TLanguageItem, Translate_Window } from '@/common/constants';
 import Accordion from '@/components/Accordion/index.tsx';
 import IconSpin from '@/components/IconSpin/index.tsx';
 import { getTextLang, openUrlByDefaultBrowser, rConsoleLog } from '@/utils';
@@ -26,8 +26,8 @@ import * as Huoshan from '@/services/translate/huoshan';
 
 const Wrapper = styled.div`
   overflow: hidden;
-  min-height: 264px;
-  max-height: 720px;
+  min-height: ${Translate_Window.minHeight}px;
+  max-height: ${Translate_Window.maxHeight}px;
   background-color: #ffffff;
   border-radius: 10px;
   border: 1px solid #e5e5e5;
@@ -226,22 +226,20 @@ function App() {
   // =================================
   // 监听划词翻译快捷键，当有文本变动时，触发
   // =================================
-  const copyText = useAutoCopyHook();
-  useUpdateEffect(() => {
+  useAutoCopyHook((copyText) => {
     setText(copyText);
     handleTranslate(copyText);
-  }, [copyText]);
+  });
 
   // =================================
   // 监听窗口自动关闭，当窗口关闭时，清空原文
   // =================================
-  const isVisible = useWindowVisible();
-  useUpdateEffect(() => {
-    if (!isVisible) {
-      setText('');
-      setTranslateText('');
-    }
-  }, [isVisible]);
+  useWindowVisible(() => {
+    // rConsoleLog('隐藏窗口');
+    setText('');
+    setTranslateText('');
+    setOpenResult(false);
+  });
 
   useMount(() => {
     // 将body元素添加到观察者中
@@ -396,7 +394,7 @@ function App() {
       visible: true,
       focus: true,
       hiddenTitle: true,
-      width: 480,
+      width: 600,
       height: 480,
       alwaysOnTop: true,
     });

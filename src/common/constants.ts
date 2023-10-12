@@ -1,5 +1,11 @@
 export const Official_Web_Url = 'https://www.zeusfy.top/';
 
+export const Translate_Window = {
+  width: 420,
+  minHeight: 264,
+  maxHeight: 720,
+};
+
 export type TLanguage = 'auto' | 'en' | 'zh' | 'de' | 'ja' | 'ko' | 'es' | 'pt' | 'th' | 'ru';
 
 export type TCode = 'eng' | 'cmn' | 'deu' | 'jpn' | 'kor' | 'spa' | 'por' | 'tha' | 'rus';

@@ -3,7 +3,6 @@ import { createRoot } from 'react-dom/client';
 import { Provider } from 'jotai';
 import { createHashRouter, RouterProvider } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
-import { initMonitors } from '@/utils/monitor';
 import ThemeProvider from './theme';
 import Translate from '@/windows/Translate';
 import Setting from '@/windows/Setting';
@@ -31,8 +30,6 @@ const router = createHashRouter([
     element: <About />,
   },
 ]);
-
-initMonitors();
 
 root.render(
   <Provider>

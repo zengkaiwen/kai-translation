@@ -11,9 +11,10 @@ import { useThrottleEffect } from 'ahooks';
 import { LanguageList } from '@/common/constants';
 import Select, { SelectOption } from '@/components/Select';
 import { toast } from 'react-hot-toast';
+import cls from 'classnames';
 
 const Wrapper = styled.div`
-  width: 480px;
+  width: 600px;
   height: 480px;
   overflow: hidden;
   border-radius: 10px;
@@ -47,8 +48,40 @@ const Wrapper = styled.div`
       color: #6659ea;
     }
   }
-
+  .container {
+    overflow: hidden;
+    height: calc(480px - 40px);
+    border-top: 1px solid #e5e5e5;
+  }
+  aside {
+    /* padding-top: 10px; */
+    overflow-x: hidden;
+    width: 120px;
+    height: calc(480px - 40px);
+    box-sizing: border-box;
+    color: #646d76;
+    border-right: 1px solid #e5e5e5;
+    li {
+      padding: 10px 10px;
+      font-size: 14px;
+      line-height: 20px;
+      cursor: pointer;
+      transition: all 0.3s ease-in-out;
+      /* border-top-right-radius: 10px;
+      border-bottom-right-radius: 10px; */
+      overflow: hidden;
+      &:not(.active):hover {
+        color: #232320;
+        background-color: #6659ea2d;
+      }
+      &.active {
+        color: #ffffff;
+        background-color: #6659ea;
+      }
+    }
+  }
   main {
+    flex: 1;
     overflow-x: hidden;
     height: calc(480px - 40px);
     .ms-container {
@@ -87,6 +120,8 @@ const Wrapper = styled.div`
 `;
 
 const Setting = () => {
+  const [tabKey, setTabKey] = React.useState<'basic' | 'translate'>('basic');
+
   const { settings, saveSettings } = useSettingConfig();
   const [atomUnderlineOpened, setAtomUnderlineOpened] = useAtom(underlineOpened);
   const [atomUnderlineShortcut, setAtomUnderlineShortcut] = useAtom(underlineShortcut);
@@ -163,55 +198,84 @@ const Setting = () => {
         </div>
       </div>
       {settings && (
-        <main>
-          <Scrollbar>
+        <div className="container flex justify-between">
+          <aside>
             <ul>
-              <li className="flex items-center justify-between">
-                <div>
-                  <h5>主语言</h5>
-                  <p className="tip">目标语言为自动时，默认翻译成主语言</p>
-                </div>
-                <Select options={memoLanguageList} value={mainLanguageOption} onChange={handleMainLangChange} />
+              <li className={cls({ active: tabKey === 'basic' })} onClick={() => setTabKey('basic')}>
+                基础设置
               </li>
-              <li className="flex items-center justify-between">
-                <div>
-                  <h5>副语言</h5>
-                  <p className="tip">原文为主语言，且目标语言为自动时，翻译成副语言</p>
-                </div>
-                <Select options={memoLanguageList} value={subLanguageOption} onChange={handleSubLangChange} />
+              <li className={cls({ active: tabKey === 'translate' })} onClick={() => setTabKey('translate')}>
+                翻译源
               </li>
             </ul>
-            <ul>
-              <li className="flex items-center justify-between">
-                <div>
-                  <h5>划词翻译</h5>
-                  <p className="tip">是否开启划词翻译功能</p>
-                </div>
-                <div>
-                  <Switch
-                    checked={atomUnderlineOpened}
-                    checkedChildren="开"
-                    unCheckedChildren="关"
-                    onChange={(v) => setAtomUnderlineOpened(v)}
-                  />
-                </div>
-              </li>
-              <li className="flex items-center justify-between">
-                <div>
-                  <h5>划词翻译快捷键</h5>
-                  <p className="tip">设置唤起划词翻译的快捷键</p>
-                </div>
-                <div>
-                  <ShortcutInput
-                    className="shortcut"
-                    value={atomUnderlineShortcut}
-                    onChange={(s) => setAtomUnderlineShortcut(s)}
-                  />
-                </div>
-              </li>
-            </ul>
-          </Scrollbar>
-        </main>
+          </aside>
+          <main>
+            <Scrollbar>
+              {tabKey === 'basic' && (
+                <React.Fragment>
+                  <ul>
+                    <li className="flex items-center justify-between">
+                      <div>
+                        <h5>主题</h5>
+                      </div>
+                      <div>
+                        <Switch
+                          checkedChildren={<span className="i-carbon-moon" />}
+                          unCheckedChildren={<span className="i-carbon-light" />}
+                        />
+                      </div>
+                    </li>
+                  </ul>
+                  <ul>
+                    <li className="flex items-center justify-between">
+                      <div>
+                        <h5>主语言</h5>
+                        <p className="tip">目标语言为自动时，默认翻译成主语言</p>
+                      </div>
+                      <Select options={memoLanguageList} value={mainLanguageOption} onChange={handleMainLangChange} />
+                    </li>
+                    <li className="flex items-center justify-between">
+                      <div>
+                        <h5>副语言</h5>
+                        <p className="tip">原文为主语言，且目标语言为自动时，翻译成副语言</p>
+                      </div>
+                      <Select options={memoLanguageList} value={subLanguageOption} onChange={handleSubLangChange} />
+                    </li>
+                  </ul>
+                  <ul>
+                    <li className="flex items-center justify-between">
+                      <div>
+                        <h5>划词翻译</h5>
+                        <p className="tip">是否开启划词翻译功能</p>
+                      </div>
+                      <div>
+                        <Switch
+                          checked={atomUnderlineOpened}
+                          checkedChildren="开"
+                          unCheckedChildren="关"
+                          onChange={(v) => setAtomUnderlineOpened(v)}
+                        />
+                      </div>
+                    </li>
+                    <li className="flex items-center justify-between">
+                      <div>
+                        <h5>划词翻译快捷键</h5>
+                        <p className="tip">设置唤起划词翻译的快捷键</p>
+                      </div>
+                      <div>
+                        <ShortcutInput
+                          className="shortcut"
+                          value={atomUnderlineShortcut}
+                          onChange={(s) => setAtomUnderlineShortcut(s)}
+                        />
+                      </div>
+                    </li>
+                  </ul>
+                </React.Fragment>
+              )}
+            </Scrollbar>
+          </main>
+        </div>
       )}
     </Wrapper>
   );

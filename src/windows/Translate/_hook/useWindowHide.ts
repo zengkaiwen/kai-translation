@@ -10,34 +10,39 @@ import { useAtomValue } from 'jotai';
 import { windowFixed } from '@/store/setting';
 
 // 判断用户是否点击到窗口外面，以实现翻译窗口的自动关闭
-function useWindowVisible(): boolean {
+function useWindowVisible(onHide?: () => void) {
   const atomWindowFixed = useAtomValue(windowFixed);
   const fixedRef = React.useRef<boolean>(atomWindowFixed);
   React.useEffect(() => {
     fixedRef.current = atomWindowFixed;
   }, [atomWindowFixed]);
-  const [isVisible, setIsVisible] = React.useState<boolean>(false);
 
-  const handleWindowHide = React.useCallback(async (pos: Position) => {
-    if (fixedRef.current) return;
-    const _isVisible = await appWindow.isVisible();
-    setIsVisible(_isVisible);
-    if (!_isVisible) return;
-    const winPos = await appWindow.outerPosition();
-    const winSize = await appWindow.outerSize();
-    // rConsoleLog(`winPos ${JSON.stringify(winPos)}`);
-    // rConsoleLog(`winSize ${JSON.stringify(winSize)}`);
-    const isOuter =
-      pos.x < winPos.x || pos.y < winPos.y || pos.x > winPos.x + winSize.width || pos.y > winPos.y + winSize.height;
-    if (isOuter) {
-      appWindow.hide();
-    }
-  }, []);
+  const handleWindowHide = React.useCallback(
+    async (pos: Position) => {
+      if (fixedRef.current) return;
+      const _isVisible = await appWindow.isVisible();
+      if (!_isVisible) return;
+      const winPos = await appWindow.outerPosition();
+      const winSize = await appWindow.outerSize();
+      // rConsoleLog(`winPos ${JSON.stringify(winPos)}`);
+      // rConsoleLog(`winSize ${JSON.stringify(winSize)}`);
+      const isOuter =
+        pos.x < winPos.x || pos.y < winPos.y || pos.x > winPos.x + winSize.width || pos.y > winPos.y + winSize.height;
+      if (isOuter) {
+        appWindow.hide();
+        onHide?.();
+      }
+    },
+    [onHide],
+  );
 
   const hanleMacOsWindowHide = React.useCallback(async () => {
     if (fixedRef.current) return;
+    const _isVisible = await appWindow.isVisible();
+    if (!_isVisible) return;
     appWindow.hide();
-  }, []);
+    onHide?.();
+  }, [onHide]);
 
   useMount(async () => {
     const osType = await type();
@@ -56,8 +61,6 @@ function useWindowVisible(): boolean {
         hanleMacOsWindowHide();
       });
   });
-
-  return isVisible;
 }
 
 export default useWindowVisible;
