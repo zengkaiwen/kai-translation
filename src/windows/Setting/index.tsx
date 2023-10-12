@@ -88,6 +88,44 @@ const Wrapper = styled.div`
       max-height: inherit;
     }
 
+    .themeSwitch:not(.rc-switch-disabled) {
+      background-color: #ffffff;
+      &.rc-switch-checked {
+        background-color: #232320;
+      }
+      &:after {
+        background-color: #232320;
+        transition: all 0.3s ease-in-out;
+      }
+      &.rc-switch-checked::after {
+        background-color: #ffffff;
+      }
+      .rc-switch-inner-checked {
+        color: #fff;
+      }
+      .rc-switch-inner-unchecked {
+        color: #000;
+      }
+    }
+
+    h4 {
+      margin: 20px 12px;
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    hr {
+      margin: 20px 12px;
+      border: none;
+      border-top: 1px solid #e5e5e5;
+    }
+    hr + p {
+      margin: 10px 12px;
+      font-size: 12px;
+      line-height: 14px;
+      color: #646d76;
+    }
+
     ul {
       margin: 10px 12px;
       border-radius: 6px;
@@ -118,6 +156,17 @@ const Wrapper = styled.div`
     }
   }
 `;
+
+const InnerTranslateEngine: SelectOption[] = [
+  {
+    label: '引擎1',
+    value: 'alibaba',
+  },
+  {
+    label: '引擎2',
+    value: 'huoshan',
+  },
+];
 
 const Setting = () => {
   const [tabKey, setTabKey] = React.useState<'basic' | 'translate'>('basic');
@@ -220,6 +269,7 @@ const Setting = () => {
                       </div>
                       <div>
                         <Switch
+                          className="themeSwitch"
                           checkedChildren={<span className="i-carbon-moon" />}
                           unCheckedChildren={<span className="i-carbon-light" />}
                         />
@@ -271,6 +321,38 @@ const Setting = () => {
                       </div>
                     </li>
                   </ul>
+                </React.Fragment>
+              )}
+              {tabKey === 'translate' && (
+                <React.Fragment>
+                  <h4>Z.E.U.S翻译</h4>
+                  <ul>
+                    <li className="flex items-center justify-between">
+                      <div>
+                        <h5>是否开启</h5>
+                      </div>
+                      <div>
+                        <Switch checkedChildren="开" unCheckedChildren="关" />
+                      </div>
+                    </li>
+                    <li className="flex items-center justify-between">
+                      <div>
+                        <h5>翻译引擎</h5>
+                        <p className="tip">选择一个翻译引擎，不同引擎的翻译结果可能有区别</p>
+                      </div>
+                      <Select
+                        options={InnerTranslateEngine}
+                        value={mainLanguageOption}
+                        onChange={handleMainLangChange}
+                      />
+                    </li>
+                  </ul>
+                  <hr />
+                  <p>
+                    以下为自定义翻译源，需要在对应翻译平台申请翻译接口的使用权限，按要求填写必要的 API 和 KEY
+                    才能使用。本程序不会将用户的 API 与 KEY 上传
+                  </p>
+                  <h4>腾讯翻译君</h4>
                 </React.Fragment>
               )}
             </Scrollbar>

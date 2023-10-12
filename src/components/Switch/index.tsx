@@ -131,6 +131,7 @@ const Wrapper = styled(RcSwitch)`
 `;
 
 export interface SwitchProps {
+  className?: string;
   checked?: boolean;
   disabled?: boolean;
   onChange?: SwitchChangeEventHandler;
@@ -138,9 +139,17 @@ export interface SwitchProps {
   unCheckedChildren?: React.ReactNode;
 }
 
-const Switch: React.FC<SwitchProps> = ({ checked, disabled, onChange, checkedChildren, unCheckedChildren }) => {
+const Switch: React.FC<SwitchProps> = ({
+  className,
+  checked,
+  disabled,
+  onChange,
+  checkedChildren,
+  unCheckedChildren,
+}) => {
   return (
     <Wrapper
+      className={className}
       checked={checked}
       disabled={disabled}
       onChange={onChange}

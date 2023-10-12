@@ -57,12 +57,11 @@ const Wrapper = styled.div`
     color: #9c9c9c;
     span {
       color: inherit;
-      font-weight: 100;
       transition: all 0.3s ease-in-out;
     }
     span.active {
       color: #6659ea;
-      font-weight: 500;
+      text-shadow: 0 0 2px #e2e2e2;
       transition: all 0.3s ease-in-out;
     }
   }
