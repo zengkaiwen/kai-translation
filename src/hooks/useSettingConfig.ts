@@ -2,11 +2,20 @@ import * as React from 'react';
 import { useMount } from 'ahooks';
 import { Setting, readSettings, writeSettings } from '@/utils/settings';
 import { useSetAtom } from 'jotai';
-import { mainLanguage, subLanguage, underlineOpened, underlineShortcut, windowFixed } from '@/store/setting';
+import {
+  innerEngine,
+  innerSwitch,
+  mainLanguage,
+  subLanguage,
+  underlineOpened,
+  underlineShortcut,
+  windowFixed,
+} from '@/store/setting';
 import { rConsoleLog } from '@/utils';
 import { emit } from '@tauri-apps/api/event';
 import { GlobalEvent } from '@/common/event';
 import { cloneDeep } from 'lodash';
+import { theme } from '@/store/global';
 
 export interface SettingConfigResult {
   settings: Setting | undefined;
@@ -21,6 +30,9 @@ function useSettingConfig(): SettingConfigResult {
   const setUnderlineShortcut = useSetAtom(underlineShortcut);
   const setMainLanguage = useSetAtom(mainLanguage);
   const setSubLanguage = useSetAtom(subLanguage);
+  const setTheme = useSetAtom(theme);
+  const setInnerSwitch = useSetAtom(innerSwitch);
+  const setInnerEngine = useSetAtom(innerEngine);
 
   const loadSettings = React.useCallback(
     async (_settings?: Setting) => {
@@ -36,8 +48,20 @@ function useSettingConfig(): SettingConfigResult {
       setUnderlineShortcut(settingsTemp.underlineShortcut);
       setMainLanguage(settingsTemp.mainLanguage);
       setSubLanguage(settingsTemp.subLanguage);
+      setTheme(settingsTemp.theme);
+      setInnerSwitch(settingsTemp.innerSwitch);
+      setInnerEngine(settingsTemp.innerEngine);
     },
-    [setMainLanguage, setSubLanguage, setUnderlineOpened, setUnderlineShortcut, setWindowsFixed],
+    [
+      setInnerEngine,
+      setInnerSwitch,
+      setMainLanguage,
+      setSubLanguage,
+      setTheme,
+      setUnderlineOpened,
+      setUnderlineShortcut,
+      setWindowsFixed,
+    ],
   );
 
   const saveSettings = React.useCallback(async (_settings: Setting) => {

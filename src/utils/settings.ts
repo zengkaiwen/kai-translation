@@ -1,6 +1,6 @@
 import { exists, BaseDirectory, readTextFile, writeTextFile, createDir } from '@tauri-apps/api/fs';
 import { cloneDeep, pick } from 'lodash';
-import { TLanguage } from '@/common/constants';
+import { TInnerTranslateEngine, TLanguage, TTheme } from '@/common/constants';
 
 export interface Setting {
   underline: boolean;
@@ -8,6 +8,10 @@ export interface Setting {
   windowFixed: boolean;
   mainLanguage: TLanguage;
   subLanguage: TLanguage;
+  // v0.0.4
+  theme: TTheme;
+  innerSwitch: boolean;
+  innerEngine: TInnerTranslateEngine;
 }
 
 const defaultSettings: Setting = {
@@ -16,6 +20,9 @@ const defaultSettings: Setting = {
   windowFixed: false,
   mainLanguage: 'zh',
   subLanguage: 'en',
+  theme: 'light',
+  innerSwitch: true,
+  innerEngine: 'alibaba',
 };
 
 /**

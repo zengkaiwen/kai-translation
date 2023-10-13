@@ -12,6 +12,8 @@ export type TCode = 'eng' | 'cmn' | 'deu' | 'jpn' | 'kor' | 'spa' | 'por' | 'tha
 
 export type TTheme = 'light' | 'dark';
 
+export type TInnerTranslateEngine = 'alibaba' | 'huoshan';
+
 export interface TLanguageItem {
   key: TLanguage;
   name: React.ReactNode;

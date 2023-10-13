@@ -9,10 +9,12 @@ import { underlineOpened, underlineShortcut } from '@/store/setting';
 import { getCursorMonitorInfo } from '@/utils/monitor';
 import { Translate_Window } from '@/common/constants';
 
-function useAutoCopyHook(onCopyText: (text: string) => void) {
+function useUnderlineTranslate(onCopyText: (text: string) => void) {
   const shortcut = useAtomValue(underlineShortcut);
   const isUnderline = useAtomValue(underlineOpened);
   const prevShortcut = usePrevious(shortcut);
+
+  const prevTextRef = React.useRef<string>('');
 
   useUpdateEffect(() => {
     if (isUnderline) {
@@ -34,8 +36,13 @@ function useAutoCopyHook(onCopyText: (text: string) => void) {
 
     if (!shortcut) return;
 
+    // =====================
+    // 划词翻译快捷键响应的方法
+    // =====================
     register(shortcut, async (s) => {
-      rConsoleLog(`按下快捷键：${s}`);
+      console.log(s);
+      // rConsoleLog(`按下快捷键：${s}`);
+      const prevClipboardText = await readText();
       await rAutoCopy();
       const isVisible = await appWindow.isVisible();
       /// 当弹窗未固定显示时，设定弹窗需要出现的位置
@@ -64,13 +71,15 @@ function useAutoCopyHook(onCopyText: (text: string) => void) {
           }
         }
       }
-      const res = await readText();
-      /// 当文案存在且不与上一次文案一致时，出现翻译弹窗
-      if (res) {
-        onCopyText(res);
-        await appWindow.show();
-        await appWindow.setFocus();
-      }
+      const curClipboardText = await readText();
+      // 没获取到剪贴板文案，不触发
+      if (!curClipboardText) return;
+      // 剪贴板两次读取文案相同，并且不是上一次翻译过的文案，说明自动复制失败
+      if (curClipboardText === prevClipboardText && prevClipboardText !== prevTextRef.current) return;
+      onCopyText(curClipboardText);
+      prevTextRef.current = curClipboardText;
+      await appWindow.show();
+      await appWindow.setFocus();
     });
   }, [onCopyText, prevShortcut, shortcut]);
 
@@ -82,4 +91,4 @@ function useAutoCopyHook(onCopyText: (text: string) => void) {
   }, [shortcut]);
 }
 
-export default useAutoCopyHook;
+export default useUnderlineTranslate;

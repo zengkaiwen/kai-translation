@@ -5,33 +5,35 @@ import Scrollbar from '@/components/Scrollbar';
 import Switch from '@/components/Switch';
 import ShortcutInput from '@/components/ShortcutInput';
 import { useAtom } from 'jotai';
-import { mainLanguage, subLanguage, underlineOpened, underlineShortcut } from '@/store/setting';
+import { innerEngine, mainLanguage, subLanguage, underlineOpened, underlineShortcut } from '@/store/setting';
 import useSettingConfig from '@/hooks/useSettingConfig';
 import { useThrottleEffect } from 'ahooks';
 import { LanguageList } from '@/common/constants';
 import Select, { SelectOption } from '@/components/Select';
 import { toast } from 'react-hot-toast';
 import cls from 'classnames';
+import { theme } from '@/store/global';
 
 const Wrapper = styled.div`
   width: 600px;
   height: 480px;
   overflow: hidden;
   border-radius: 10px;
-  border: 1px solid #e5e5e5;
-  background-color: #ffffff;
+  border: 1px solid ${(props) => props.theme.linePrimary};
+  background-color: ${(props) => props.theme.bgPrimary};
+  color: ${(props) => props.theme.textPrimary};
   box-sizing: border-box;
+  transition: all 0.3s ease-in-out;
 
   .toolbar {
     padding: 12px 22px;
-    background-color: #ffffff;
-    cursor: move;
+    cursor: grab;
     .left {
       gap: 10px;
       span + span {
         padding: 4px 6px;
-        background-color: #6659ea;
-        color: #ffffff;
+        background-color: ${(props) => props.theme.themePrimary};
+        color: ${(props) => props.theme.textPrimary};
         font-size: 12px;
         border-radius: 4px;
       }
@@ -41,17 +43,17 @@ const Wrapper = styled.div`
     }
   }
   .icon {
-    background-color: #787878;
-    color: #787878;
+    background-color: ${(props) => props.theme.textPrimary};
+    color: ${(props) => props.theme.textPrimary};
     &:hover {
-      background-color: #6659ea;
-      color: #6659ea;
+      background-color: ${(props) => props.theme.themePrimary};
+      color: ${(props) => props.theme.themePrimary};
     }
   }
   .container {
     overflow: hidden;
     height: calc(480px - 40px);
-    border-top: 1px solid #e5e5e5;
+    border-top: 1px solid ${(props) => props.theme.linePrimary};
   }
   aside {
     /* padding-top: 10px; */
@@ -59,8 +61,8 @@ const Wrapper = styled.div`
     width: 120px;
     height: calc(480px - 40px);
     box-sizing: border-box;
-    color: #646d76;
-    border-right: 1px solid #e5e5e5;
+    color: ${(props) => props.theme.textSecond};
+    border-right: 1px solid ${(props) => props.theme.linePrimary};
     li {
       padding: 10px 10px;
       font-size: 14px;
@@ -71,12 +73,12 @@ const Wrapper = styled.div`
       border-bottom-right-radius: 10px; */
       overflow: hidden;
       &:not(.active):hover {
-        color: #232320;
-        background-color: #6659ea2d;
+        color: ${(props) => props.theme.textFour};
+        background-color: ${(props) => props.theme.themePrimary};
       }
       &.active {
-        color: #ffffff;
-        background-color: #6659ea;
+        color: ${(props) => props.theme.bgPrimary};
+        background-color: ${(props) => props.theme.themePrimary};
       }
     }
   }
@@ -108,29 +110,31 @@ const Wrapper = styled.div`
       }
     }
 
-    h4 {
-      margin: 20px 12px;
-      font-size: 14px;
-      font-weight: 700;
-    }
-
     hr {
       margin: 20px 12px;
       border: none;
-      border-top: 1px solid #e5e5e5;
+      border-top: 1px solid ${(props) => props.theme.themePrimary};
     }
     hr + p {
       margin: 10px 12px;
       font-size: 12px;
       line-height: 14px;
-      color: #646d76;
+      color: ${(props) => props.theme.textSecond};
     }
 
     ul {
       margin: 10px 12px;
       border-radius: 6px;
       padding: 8px 16px;
-      background-color: #f6f8fa;
+      background-color: ${(props) => props.theme.bgSecond};
+      transition: background-color 0.3s ease-in-out;
+
+      h4 {
+        padding: 10px 0;
+        font-size: 14px;
+        font-weight: 700;
+      }
+
       li {
         padding: 12px 0;
         > div:nth-child(1) {
@@ -144,11 +148,11 @@ const Wrapper = styled.div`
           margin-top: 8px;
           font-size: 12px;
           line-height: 14px;
-          color: #7c7c7c;
+          color: ${(props) => props.theme.textThird};
         }
       }
       li + li {
-        border-top: 1px solid #e5e5e5;
+        border-top: 1px solid ${(props) => props.theme.linePrimary};
       }
       .shortcut {
         width: 200px;
@@ -159,11 +163,11 @@ const Wrapper = styled.div`
 
 const InnerTranslateEngine: SelectOption[] = [
   {
-    label: '引擎1',
+    label: '引擎A',
     value: 'alibaba',
   },
   {
-    label: '引擎2',
+    label: '引擎B',
     value: 'huoshan',
   },
 ];
@@ -176,6 +180,8 @@ const Setting = () => {
   const [atomUnderlineShortcut, setAtomUnderlineShortcut] = useAtom(underlineShortcut);
   const [atomMainLanguage, setAtomMainLanguage] = useAtom(mainLanguage);
   const [atomSubLanguage, setAtomSubLanguage] = useAtom(subLanguage);
+  const [atomTheme, setAtomTheme] = useAtom(theme);
+  const [atomInnterEngine, setAtomInnterEngine] = useAtom(innerEngine);
 
   useThrottleEffect(
     () => {
@@ -184,6 +190,8 @@ const Setting = () => {
         ...settings,
         underline: atomUnderlineOpened,
         underlineShortcut: atomUnderlineShortcut,
+        theme: atomTheme,
+        innerEngine: atomInnterEngine,
       };
       if (atomMainLanguage !== atomSubLanguage) {
         settingsParams.mainLanguage = atomMainLanguage;
@@ -191,7 +199,15 @@ const Setting = () => {
       }
       saveSettings(settingsParams);
     },
-    [atomUnderlineOpened, atomUnderlineShortcut, settings, atomMainLanguage, atomSubLanguage],
+    [
+      atomUnderlineOpened,
+      atomUnderlineShortcut,
+      settings,
+      atomMainLanguage,
+      atomSubLanguage,
+      atomTheme,
+      atomInnterEngine,
+    ],
     {
       wait: 1000,
       trailing: true,
@@ -270,8 +286,10 @@ const Setting = () => {
                       <div>
                         <Switch
                           className="themeSwitch"
+                          checked={atomTheme === 'dark'}
                           checkedChildren={<span className="i-carbon-moon" />}
                           unCheckedChildren={<span className="i-carbon-light" />}
+                          onChange={(v) => setAtomTheme(v ? 'dark' : 'light')}
                         />
                       </div>
                     </li>
@@ -325,34 +343,34 @@ const Setting = () => {
               )}
               {tabKey === 'translate' && (
                 <React.Fragment>
-                  <h4>Z.E.U.S翻译</h4>
                   <ul>
-                    <li className="flex items-center justify-between">
+                    <h4>内置翻译</h4>
+                    {/* <li className="flex items-center justify-between">
                       <div>
                         <h5>是否开启</h5>
                       </div>
                       <div>
                         <Switch checkedChildren="开" unCheckedChildren="关" />
                       </div>
-                    </li>
+                    </li> */}
                     <li className="flex items-center justify-between">
                       <div>
                         <h5>翻译引擎</h5>
-                        <p className="tip">选择一个翻译引擎，不同引擎的翻译结果可能有区别</p>
+                        <p className="tip">选择一个翻译引擎，不同引擎的翻译结果可能有区别（注意：引擎B每天限制90条）</p>
                       </div>
                       <Select
                         options={InnerTranslateEngine}
-                        value={mainLanguageOption}
-                        onChange={handleMainLangChange}
+                        value={InnerTranslateEngine.find((item) => item.value === atomInnterEngine)}
+                        onChange={(v) => setAtomInnterEngine(v.value)}
                       />
                     </li>
                   </ul>
-                  <hr />
+                  {/* <hr />
                   <p>
                     以下为自定义翻译源，需要在对应翻译平台申请翻译接口的使用权限，按要求填写必要的 API 和 KEY
                     才能使用。本程序不会将用户的 API 与 KEY 上传
                   </p>
-                  <h4>腾讯翻译君</h4>
+                  <h4>腾讯翻译君</h4> */}
                 </React.Fragment>
               )}
             </Scrollbar>

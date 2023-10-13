@@ -1,7 +1,7 @@
 /* eslint-disable object-curly-spacing */
 import * as React from 'react';
 import { styled } from 'styled-components';
-import { useMount, useUnmount, useUpdateEffect } from 'ahooks';
+import { useMount, useUnmount } from 'ahooks';
 import { LogicalSize, appWindow, WebviewWindow, getAll } from '@tauri-apps/api/window';
 import { writeText } from '@tauri-apps/api/clipboard';
 import cls from 'classnames';
@@ -12,7 +12,7 @@ import Accordion from '@/components/Accordion/index.tsx';
 import IconSpin from '@/components/IconSpin/index.tsx';
 import { getTextLang, openUrlByDefaultBrowser, rConsoleLog } from '@/utils';
 import Scrollbar from '@/components/Scrollbar/index.tsx';
-import useAutoCopyHook from './_hook/useAutoCopyHook';
+import useUnderlineTranslate from './_hook/useUnderlineTranslate';
 import { listen } from '@tauri-apps/api/event';
 import { SystemTrayPayload } from '@/common/systemtray.ts';
 import useSettingConfig from '@/hooks/useSettingConfig.ts';
@@ -20,30 +20,32 @@ import { GlobalEvent } from '@/common/event';
 import { Setting } from '@/utils/settings';
 import useWindowVisible from './_hook/useWindowHide';
 import { useAtom, useAtomValue } from 'jotai';
-import { mainLanguage, subLanguage, windowFixed } from '@/store/setting';
-import * as Alibaba from '@/services/translate/alibaba';
-import * as Huoshan from '@/services/translate/huoshan';
+import { innerEngine, mainLanguage, subLanguage, windowFixed } from '@/store/setting';
+import { AlibabaInnerTranslate, HuoshanInnterTranslate } from '@/services/innerTranslate';
+
+const alibabaInnerTranslate = new AlibabaInnerTranslate();
+const huoshanInnerTranslate = new HuoshanInnterTranslate();
 
 const Wrapper = styled.div`
   overflow: hidden;
   min-height: ${Translate_Window.minHeight}px;
   max-height: ${Translate_Window.maxHeight}px;
-  background-color: #ffffff;
+  background-color: ${(props) => props.theme.bgPrimary};
   border-radius: 10px;
-  border: 1px solid #e5e5e5;
+  border: 1px solid ${(props) => props.theme.linePrimary};
+  color: ${(props) => props.theme.textPrimary};
+  transition: all 0.3s ease-in-out;
 
   .toolbar {
-    margin: 4px 12px;
-    padding: 8px 10px;
-    background-color: #ffffff;
-    cursor: move;
+    padding: 12px 22px;
+    cursor: grab;
     .left {
       cursor: pointer;
       gap: 10px;
       span + span {
         padding: 4px 6px;
-        background-color: #6659ea;
-        color: #ffffff;
+        background-color: ${(props) => props.theme.themePrimary};
+        color: ${(props) => props.theme.textPrimary};
         font-size: 12px;
         border-radius: 4px;
       }
@@ -53,15 +55,15 @@ const Wrapper = styled.div`
     }
   }
   .icon {
-    background-color: #787878;
-    color: #787878;
+    background-color: ${(props) => props.theme.textPrimary};
+    color: ${(props) => props.theme.textPrimary};
     &:hover {
-      background-color: #6659ea;
-      color: #6659ea;
+      background-color: ${(props) => props.theme.themePrimary};
+      color: ${(props) => props.theme.themePrimary};
     }
     &.active {
-      background-color: #6659ea;
-      color: #6659ea;
+      background-color: ${(props) => props.theme.themePrimary};
+      color: ${(props) => props.theme.themePrimary};
     }
   }
   .i-carbon-chevron-left {
@@ -82,7 +84,8 @@ const Wrapper = styled.div`
       margin: 10px 12px;
       border-radius: 6px;
       padding: 8px 10px;
-      background-color: #f6f8fa;
+      background-color: ${(props) => props.theme.bgSecond};
+      transition: all 0.3s ease-in-out;
       textarea {
         margin: 0;
         padding: 0;
@@ -91,7 +94,7 @@ const Wrapper = styled.div`
         resize: none;
         font-size: 13px;
         line-height: 20px;
-        color: #232323;
+        color: ${(props) => props.theme.textPrimary};
 
         border-radius: 0;
         background: transparent;
@@ -103,16 +106,13 @@ const Wrapper = styled.div`
         box-sizing: border-box;
         &::placeholder {
           font-family: 'PingFangSC-Regular', 'Microsoft YaHei', Courier, monospace;
+          color: ${(props) => props.theme.textColorFourth};
+          transition: all 0.3s ease-in-out;
         }
         &:focus {
           outline: none;
         }
         height: auto;
-        &::placeholder {
-          font-family: 'TrubitPLEX';
-          color: ${(props) => props.theme.textColorFourth};
-          transition: all 0.3s ease-in-out;
-        }
         &::-webkit-scrollbar {
           display: none;
         }
@@ -126,7 +126,8 @@ const Wrapper = styled.div`
       margin: 10px 12px;
       border-radius: 6px;
       font-size: 14px;
-      background-color: #f6f8fa;
+      background-color: ${(props) => props.theme.bgSecond};
+      transition: all 0.3s ease-in-out;
       .header {
         padding: 8px 10px;
         > div {
@@ -143,27 +144,27 @@ const Wrapper = styled.div`
       }
       .content {
         padding: 20px 10px;
-        border-top: 1px solid rgba(0, 0, 0, 0.04);
+        border-top: 1px solid ${(props) => props.theme.lineSecond};
         flex-wrap: wrap;
         > div {
           margin: 4px 4px;
           padding: 4px 8px;
           font-size: 12px;
           line-height: 14px;
-          background-color: #efefef;
+          background-color: ${(props) => props.theme.bgThird};
           border-radius: 4px;
           cursor: pointer;
           transition: all 0.3s ease-in-out;
           &:hover {
-            background-color: #d2d2d2;
+            background-color: ${(props) => props.theme.bgFour};
           }
           &.active {
-            background-color: #d2d2d2;
+            background-color: ${(props) => props.theme.bgFour};
           }
           &.disabled {
             pointer-events: none;
             cursor: not-allowed;
-            color: #999;
+            color: ${(props) => props.theme.disabled};
           }
           span:nth-child(2) {
             padding-left: 4px;
@@ -174,7 +175,8 @@ const Wrapper = styled.div`
     .result-panel {
       margin: 10px 12px;
       border-radius: 6px;
-      background-color: #f6f8fa;
+      background-color: ${(props) => props.theme.bgSecond};
+      transition: all 0.3s ease-in-out;
       .header {
         padding: 8px 10px;
         font-size: 14px;
@@ -182,21 +184,21 @@ const Wrapper = styled.div`
       }
       .content {
         padding: 18px 10px 8px;
-        border-top: 1px solid rgba(0, 0, 0, 0.04);
+        border-top: 1px solid ${(props) => props.theme.lineSecond};
         font-size: 14px;
         line-height: 20px;
-        color: #363636;
+        color: ${(props) => props.theme.textPrimary};
       }
       .loading {
         min-height: 36px;
       }
       .empty {
         padding: 8px 10px;
-        border-top: 1px solid rgba(0, 0, 0, 0.04);
+        border-top: 1px solid ${(props) => props.theme.lineSecond};
         font-size: 12px;
         line-height: 20px;
         text-align: center;
-        color: #a2a2a2;
+        color: ${(props) => props.theme.textFour};
       }
       .footer {
         padding: 8px 10px;
@@ -220,15 +222,19 @@ function App() {
   const [atomWindowFixed, setAtomWindowFixed] = useAtom(windowFixed);
   const atomMainLanguage = useAtomValue(mainLanguage);
   const atomSubLanguage = useAtomValue(subLanguage);
+  const atomInnerEngine = useAtomValue(innerEngine);
+
   const settingWindowRef = React.useRef<WebviewWindow | null>(null);
+  const translateFnRef = React.useRef<(t?: string) => void>();
+
   const { loadSettings } = useSettingConfig();
 
   // =================================
   // 监听划词翻译快捷键，当有文本变动时，触发
   // =================================
-  useAutoCopyHook((copyText) => {
+  useUnderlineTranslate((copyText) => {
     setText(copyText);
-    handleTranslate(copyText);
+    translateFnRef.current?.(copyText);
   });
 
   // =================================
@@ -272,6 +278,13 @@ function App() {
   useUnmount(() => {
     observer.unobserve(document.body);
   });
+
+  const translateInterface = React.useMemo(() => {
+    if (atomInnerEngine === 'huoshan') {
+      return huoshanInnerTranslate;
+    }
+    return alibabaInnerTranslate;
+  }, [atomInnerEngine]);
 
   // 原文与翻译后的文案
   const [text, setText] = React.useState<string>('');
@@ -347,7 +360,7 @@ function App() {
       const [sourceLang, targetLang] = await sourceTargetLang(sourceText);
       console.log('sourceLang, targetLang', sourceLang, targetLang);
       try {
-        const translateResult = await Huoshan.translate({
+        const translateResult = await translateInterface.translate({
           source: sourceLang,
           target: targetLang,
           text: sourceText,
@@ -356,8 +369,11 @@ function App() {
       } catch (error) {}
       setLoading(false);
     },
-    [openSourcePanel, openTargetPanel, sourceTargetLang, text],
+    [openSourcePanel, openTargetPanel, sourceTargetLang, text, translateInterface],
   );
+  React.useEffect(() => {
+    translateFnRef.current = handleTranslate;
+  }, [handleTranslate]);
 
   const handleEnter = React.useCallback(
     async (e: React.KeyboardEvent<HTMLTextAreaElement>) => {

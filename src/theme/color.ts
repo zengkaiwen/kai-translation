@@ -15,6 +15,9 @@ export const lightTheme: DefaultTheme = {
   bgFour: '#e5e5e5',
   // 边框
   linePrimary: 'rgba(0, 0, 0, 0.1)',
+  lineSecond: 'rgba(0, 0, 0, 0.05)',
+  // 其他
+  disabled: '#cccccc',
 };
 
 export const darkTheme: DefaultTheme = {
@@ -32,4 +35,6 @@ export const darkTheme: DefaultTheme = {
   bgFour: '#4e4e4e',
   // 边框
   linePrimary: 'rgba(255, 255, 255, 0.1)',
+  lineSecond: 'rgba(255, 255, 255, 0.05)',
+  disabled: '#cccccc',
 };
