@@ -11,7 +11,7 @@ const rotation = keyframes`
 const Wrapper = styled.span`
   width: 24px;
   height: 24px;
-  border: 3px solid #dfdfdf;
+  border: 3px solid ${(props) => props.theme.bgFour};
   border-radius: 50%;
   display: inline-block;
   position: relative;
@@ -23,7 +23,7 @@ const Wrapper = styled.span`
     position: absolute;
     left: 0;
     top: 0;
-    background: #c2c2c2;
+    background: ${(props) => props.theme.textSecond};
     width: 8px;
     height: 8px;
     transform: translate(-50%, 50%);

@@ -23,7 +23,7 @@ struct MousePayload {
 }
 
 fn main() {
-    let item_version = CustomMenuItem::new("version".to_string(), "zeus v0.0.3").disabled();
+    let item_version = CustomMenuItem::new("version".to_string(), "zeus v0.0.4").disabled();
     let item_show = CustomMenuItem::new("show".to_string(), "输入翻译");
     let item_setting = CustomMenuItem::new("setting".to_string(), "偏好设置");
     let item_about = CustomMenuItem::new("about".to_string(), "关于");

@@ -15,7 +15,8 @@ export class InnterTranslate {
     return this._client;
   }
 
-  public async translate(params?: ITranslateParams): Promise<string | void> {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  public async translate(_params?: ITranslateParams): Promise<string | void> {
     await this._initClient();
   }
 }
