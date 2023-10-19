@@ -75,6 +75,15 @@
     "systemTray": {
       "iconPath": "icons/128x128@2x.png",
       "iconAsTemplate": true
+    },
+    "updater": {
+      "active": true,
+      "dialog": true,
+      "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IEU1NkI0RjdBQTQ0RjY4MzcKUldRM2FFK2tlazlyNWRZNU5iZ3BHV1ZPV3hiOStiNnJiVUwyL2hHNVZWangwODAvRVd4andOVFEK",
+      "endpoints": ["https://www.zeusfy.top/updater.json"],
+      "windows": {
+        "installMode": "passive"
+      }
     }
   }
 }

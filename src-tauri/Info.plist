@@ -1,4 +1,6 @@
 <dict>
+  <key>CFBundleDevelopmentRegion</key>
+	<string>zh_CN</string>
   <key>NSAccessibilityProtocol</key>
   <true/>
 </dict>
