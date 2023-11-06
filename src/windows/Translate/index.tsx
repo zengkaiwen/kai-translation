@@ -22,9 +22,11 @@ import useWindowVisible from './_hook/useWindowHide';
 import { useAtom, useAtomValue } from 'jotai';
 import { innerEngine, mainLanguage, subLanguage, windowFixed } from '@/store/setting';
 import { AlibabaInnerTranslate, HuoshanInnterTranslate } from '@/services/innerTranslate';
+import { DeeplInnerTranslate } from '@/services/innerTranslate/deepl';
 
 const alibabaInnerTranslate = new AlibabaInnerTranslate();
 const huoshanInnerTranslate = new HuoshanInnterTranslate();
+const deeplInnterTranslate = new DeeplInnerTranslate();
 
 const Wrapper = styled.div`
   overflow: hidden;
@@ -280,6 +282,7 @@ function App() {
   });
 
   const translateInterface = React.useMemo(() => {
+    return deeplInnterTranslate;
     if (atomInnerEngine === 'huoshan') {
       return huoshanInnerTranslate;
     }

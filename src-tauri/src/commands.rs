@@ -1,5 +1,8 @@
+use brotli2::read::{BrotliDecoder, BrotliEncoder};
 use mouse_position::mouse_position::Mouse;
 use rdev::{simulate, EventType, Key};
+use std::collections::HashMap;
+use std::io::prelude::*;
 use std::{thread, time};
 use whatlang::detect;
 
@@ -53,4 +56,19 @@ pub async fn auto_copy() {
     send(&EventType::KeyRelease(Key::ControlLeft));
     #[cfg(target_os = "macos")]
     send(&EventType::KeyRelease(Key::MetaLeft));
+}
+
+#[tauri::command]
+pub fn brotli_parse(text: HashMap<String, u8>) -> Result<String, ()> {
+    let mut data = Vec::new();
+    for (_key, value) in text {
+        let value_bytes = value.to_string().into_bytes();
+        data.extend_from_slice(&value_bytes);
+    }
+    let slice_of_data: &[u8] = &data;
+    // let compressor = BrotliEncoder::new(slice_of_data, 6);
+    let mut decompressor = BrotliDecoder::new(slice_of_data);
+    let mut result = String::new();
+    decompressor.read_to_string(&mut result).unwrap();
+    Ok(result)
 }

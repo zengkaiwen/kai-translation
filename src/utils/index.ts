@@ -17,6 +17,11 @@ export function rTranslate(source: TLanguage, target: TLanguage, text: string) {
   }) as Promise<string>;
 }
 
+export function rBrotilParse(text: Uint8Array) {
+  console.log('data: ', text);
+  return invoke('brotli_parse', { text }) as Promise<string>;
+}
+
 /** 获取物理像素上的鼠标位置 */
 export function rGetMousePosition() {
   return invoke('get_mouse_position') as Promise<[number, number]>;

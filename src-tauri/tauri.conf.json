@@ -18,7 +18,8 @@
         "scope": [
           "https://translate.alibaba.com/api/*",
           "https://fanyi.qq.com/api/*",
-          "https://translate.volcengine.com/*"
+          "https://translate.volcengine.com/*",
+          "https://www2.deepl.com/*"
         ]
       },
       "shell": {

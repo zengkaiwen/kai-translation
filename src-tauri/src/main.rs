@@ -57,6 +57,7 @@ fn main() {
             commands::get_mouse_position,
             commands::get_text_lang,
             commands::auto_copy,
+            commands::brotli_parse,
         ])
         .setup(|app| {
             // 隐藏MacOS程序坞上的图标
