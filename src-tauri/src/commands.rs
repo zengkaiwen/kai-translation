@@ -1,8 +1,7 @@
-use brotli2::read::{BrotliDecoder, BrotliEncoder};
+use brotli2::read::BrotliDecoder;
 use mouse_position::mouse_position::Mouse;
 use rdev::{simulate, EventType, Key};
-use std::collections::HashMap;
-use std::io::prelude::*;
+use std::io::Read;
 use std::{thread, time};
 use whatlang::detect;
 
@@ -59,16 +58,32 @@ pub async fn auto_copy() {
 }
 
 #[tauri::command]
-pub fn brotli_parse(text: HashMap<String, u8>) -> Result<String, ()> {
-    let mut data = Vec::new();
-    for (_key, value) in text {
-        let value_bytes = value.to_string().into_bytes();
-        data.extend_from_slice(&value_bytes);
+pub fn brotli_parse(data: String) -> Result<String, ()> {
+    // Parse the string data into a vector.
+    let vec: Result<Vec<u8>, _> = data.split(',').map(|s| s.trim().parse::<u8>()).collect();
+    let vec = match vec {
+        Ok(v) => v, // If parsing successful, use the parsed vector.
+        Err(_) => {
+            // If parsing failed, return an error result.
+            println!("{}: {}", "vec", "error");
+            return Err(());
+        }
+    };
+
+    // Try to create the BrotliDecoder and decompress the data.
+    let mut decompressor = BrotliDecoder::new(&vec[..]);
+    let mut result = vec![];
+    if let Err(e) = decompressor.read_to_end(&mut result) {
+        println!("read_to_end failed: {:?}", e);
+        return Err(());
     }
-    let slice_of_data: &[u8] = &data;
-    // let compressor = BrotliEncoder::new(slice_of_data, 6);
-    let mut decompressor = BrotliDecoder::new(slice_of_data);
-    let mut result = String::new();
-    decompressor.read_to_string(&mut result).unwrap();
-    Ok(result)
+
+    // Try to convert the decompressed data into a String.
+    match String::from_utf8(result) {
+        Ok(s) => Ok(s),
+        Err(e) => {
+            println!("Conversion to string failed: {:?}", e);
+            Err(())
+        }
+    }
 }

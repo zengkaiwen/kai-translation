@@ -35,9 +35,15 @@ interface PostData {
 }
 
 interface ResData {
-  text: string;
-  source_lang: string;
-  target_lang: string;
+  jsonrpc: string;
+  id: number;
+  result: {
+    texts: Array<{
+      alternatives: [];
+      text: string;
+    }>;
+    lang: string;
+  };
 }
 
 const API_URL = 'https://www2.deepl.com/jsonrpc';
@@ -87,11 +93,10 @@ export class DeeplInnerTranslate extends InnterTranslate {
         },
         responseType: ResponseType.Binary,
       });
-      console.log(res);
       if (res.headers['content-encoding'] === 'br') {
-        const data = new Uint8Array(res.data as []);
-        const str = await rBrotilParse(data);
-        console.log('brotil', str);
+        const str = await rBrotilParse((res.data as Array<number>).toString());
+        const resData: ResData = JSON.parse(str);
+        return resData.result.texts[0].text.normalize();
       }
       return '';
     } catch (error) {

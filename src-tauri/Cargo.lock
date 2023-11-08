@@ -4281,7 +4281,6 @@ dependencies = [
 name = "zeus"
 version = "0.0.4"
 dependencies = [
- "brotli",
  "brotli2",
  "mouse_position",
  "rdev",
