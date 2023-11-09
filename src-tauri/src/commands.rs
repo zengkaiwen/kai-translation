@@ -18,10 +18,10 @@ fn send(event_type: &EventType) {
 }
 
 #[tauri::command]
-pub fn console_log(text: String) {
-    println!("【Debug】=========");
-    println!("{}", text);
-    println!("==================");
+pub fn console_log(text: String, time: String) {
+    println!("Debug {}", time);
+    println!("├── {}", text);
+    println!("└────────────────────────────────────");
 }
 
 #[tauri::command]

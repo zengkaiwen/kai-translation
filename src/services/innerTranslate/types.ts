@@ -11,7 +11,9 @@ export class InnterTranslate {
     if (this._client) {
       return this._client;
     }
-    this._client = await getClient();
+    this._client = await getClient({
+      connectTimeout: 5000,
+    });
     return this._client;
   }
 

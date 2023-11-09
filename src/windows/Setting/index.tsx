@@ -5,7 +5,14 @@ import Scrollbar from '@/components/Scrollbar';
 import Switch from '@/components/Switch';
 import ShortcutInput from '@/components/ShortcutInput';
 import { useAtom } from 'jotai';
-import { innerEngine, mainLanguage, subLanguage, underlineOpened, underlineShortcut } from '@/store/setting';
+import {
+  innerPlan,
+  mainLanguage,
+  subLanguage,
+  underlineOpened,
+  underlineShortcut,
+  enterShortcut,
+} from '@/store/setting';
 import useSettingConfig from '@/hooks/useSettingConfig';
 import { useThrottleEffect } from 'ahooks';
 import { LanguageList } from '@/common/constants';
@@ -90,6 +97,10 @@ const Wrapper = styled.div`
       max-height: inherit;
     }
 
+    .content {
+      padding-bottom: 10px;
+    }
+
     .themeSwitch:not(.rc-switch-disabled) {
       background-color: #ffffff;
       &.rc-switch-checked {
@@ -163,12 +174,12 @@ const Wrapper = styled.div`
 
 const InnerTranslateEngine: SelectOption[] = [
   {
-    label: '引擎A',
-    value: 'alibaba',
+    label: '速度',
+    value: 'speed',
   },
   {
-    label: '引擎B',
-    value: 'huoshan',
+    label: '准确度',
+    value: 'accuracy',
   },
 ];
 
@@ -178,10 +189,11 @@ const Setting = () => {
   const { settings, saveSettings } = useSettingConfig();
   const [atomUnderlineOpened, setAtomUnderlineOpened] = useAtom(underlineOpened);
   const [atomUnderlineShortcut, setAtomUnderlineShortcut] = useAtom(underlineShortcut);
+  const [atomEnterShortcut, setAtomEnterShortcut] = useAtom(enterShortcut);
   const [atomMainLanguage, setAtomMainLanguage] = useAtom(mainLanguage);
   const [atomSubLanguage, setAtomSubLanguage] = useAtom(subLanguage);
   const [atomTheme, setAtomTheme] = useAtom(theme);
-  const [atomInnterEngine, setAtomInnterEngine] = useAtom(innerEngine);
+  const [atomInnterPLan, setAtomInnterPLan] = useAtom(innerPlan);
 
   useThrottleEffect(
     () => {
@@ -190,8 +202,9 @@ const Setting = () => {
         ...settings,
         underline: atomUnderlineOpened,
         underlineShortcut: atomUnderlineShortcut,
+        enterShortcut: atomEnterShortcut,
         theme: atomTheme,
-        innerEngine: atomInnterEngine,
+        innerPLan: atomInnterPLan,
       };
       if (atomMainLanguage !== atomSubLanguage) {
         settingsParams.mainLanguage = atomMainLanguage;
@@ -202,11 +215,12 @@ const Setting = () => {
     [
       atomUnderlineOpened,
       atomUnderlineShortcut,
+      atomEnterShortcut,
       settings,
       atomMainLanguage,
       atomSubLanguage,
       atomTheme,
-      atomInnterEngine,
+      atomInnterPLan,
     ],
     {
       wait: 1000,
@@ -270,14 +284,14 @@ const Setting = () => {
                 基础设置
               </li>
               <li className={cls({ active: tabKey === 'translate' })} onClick={() => setTabKey('translate')}>
-                翻译源
+                翻译设置
               </li>
             </ul>
           </aside>
           <main>
             <Scrollbar>
               {tabKey === 'basic' && (
-                <React.Fragment>
+                <div className="content">
                   <ul>
                     <li className="flex items-center justify-between">
                       <div>
@@ -338,11 +352,24 @@ const Setting = () => {
                         />
                       </div>
                     </li>
+                    <li className="flex items-center justify-between">
+                      <div>
+                        <h5>输入翻译快捷键</h5>
+                        <p className="tip">设置唤起窗口出现的快捷键</p>
+                      </div>
+                      <div>
+                        <ShortcutInput
+                          className="shortcut"
+                          value={atomEnterShortcut}
+                          onChange={(s) => setAtomEnterShortcut(s)}
+                        />
+                      </div>
+                    </li>
                   </ul>
-                </React.Fragment>
+                </div>
               )}
               {tabKey === 'translate' && (
-                <React.Fragment>
+                <div className="content">
                   <ul>
                     <h4>内置翻译</h4>
                     {/* <li className="flex items-center justify-between">
@@ -355,13 +382,15 @@ const Setting = () => {
                     </li> */}
                     <li className="flex items-center justify-between">
                       <div>
-                        <h5>翻译引擎</h5>
-                        <p className="tip">选择一个翻译引擎，不同引擎的翻译结果可能有区别（注意：引擎B每天限制90条）</p>
+                        <h5>优先方案</h5>
+                        <p className="tip">
+                          选择一种优先方案，准确度优先的翻译质量会更高，但翻译等待时长较久。速度优先相反
+                        </p>
                       </div>
                       <Select
                         options={InnerTranslateEngine}
-                        value={InnerTranslateEngine.find((item) => item.value === atomInnterEngine)}
-                        onChange={(v) => setAtomInnterEngine(v.value)}
+                        value={InnerTranslateEngine.find((item) => item.value === atomInnterPLan)}
+                        onChange={(v) => setAtomInnterPLan(v.value)}
                       />
                     </li>
                   </ul>
@@ -371,7 +400,7 @@ const Setting = () => {
                     才能使用。本程序不会将用户的 API 与 KEY 上传
                   </p>
                   <h4>腾讯翻译君</h4> */}
-                </React.Fragment>
+                </div>
               )}
             </Scrollbar>
           </main>

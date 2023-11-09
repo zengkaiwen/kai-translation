@@ -17,6 +17,9 @@ dependencies:
   classnames:
     specifier: ^2.3.2
     version: 2.3.2
+  dayjs:
+    specifier: ^1.11.10
+    version: 1.11.10
   framer-motion:
     specifier: ^10.16.4
     version: 10.16.4(react-dom@18.2.0)(react@18.2.0)

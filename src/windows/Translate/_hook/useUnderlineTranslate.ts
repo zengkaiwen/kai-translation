@@ -1,6 +1,6 @@
+import * as React from 'react';
 import { register, isRegistered, unregister } from '@tauri-apps/api/globalShortcut';
 import { usePrevious, useUpdateEffect } from 'ahooks';
-import React from 'react';
 import { getOsType, rAutoCopy, rConsoleLog, rGetMousePosition } from '@/utils';
 import { LogicalPosition, PhysicalPosition, appWindow } from '@tauri-apps/api/window';
 import { readText } from '@tauri-apps/api/clipboard';
@@ -25,7 +25,7 @@ function useUnderlineTranslate(onCopyText: (text: string) => void) {
   }, [shortcut, isUnderline]);
 
   const registerShortcut = React.useCallback(async () => {
-    rConsoleLog(`注册快捷键${shortcut}`);
+    rConsoleLog(`注册划词快捷键 ${shortcut}`);
     if (prevShortcut) {
       const prevRegistered = await isRegistered(prevShortcut);
       prevRegistered && unregister(prevShortcut);

@@ -3,12 +3,13 @@ import { useMount } from 'ahooks';
 import { Setting, readSettings, writeSettings } from '@/utils/settings';
 import { useSetAtom } from 'jotai';
 import {
-  innerEngine,
+  innerPlan,
   innerSwitch,
   mainLanguage,
   subLanguage,
   underlineOpened,
   underlineShortcut,
+  enterShortcut,
   windowFixed,
 } from '@/store/setting';
 import { rConsoleLog } from '@/utils';
@@ -28,11 +29,12 @@ function useSettingConfig(): SettingConfigResult {
   const setWindowsFixed = useSetAtom(windowFixed);
   const setUnderlineOpened = useSetAtom(underlineOpened);
   const setUnderlineShortcut = useSetAtom(underlineShortcut);
+  const setEnterShortcut = useSetAtom(enterShortcut);
   const setMainLanguage = useSetAtom(mainLanguage);
   const setSubLanguage = useSetAtom(subLanguage);
   const setTheme = useSetAtom(theme);
   const setInnerSwitch = useSetAtom(innerSwitch);
-  const setInnerEngine = useSetAtom(innerEngine);
+  const setInnerPlan = useSetAtom(innerPlan);
 
   const loadSettings = React.useCallback(
     async (_settings?: Setting) => {
@@ -46,20 +48,22 @@ function useSettingConfig(): SettingConfigResult {
       setWindowsFixed(settingsTemp.windowFixed);
       setUnderlineOpened(settingsTemp.underline);
       setUnderlineShortcut(settingsTemp.underlineShortcut);
+      setEnterShortcut(settingsTemp.enterShortcut);
       setMainLanguage(settingsTemp.mainLanguage);
       setSubLanguage(settingsTemp.subLanguage);
       setTheme(settingsTemp.theme);
       setInnerSwitch(settingsTemp.innerSwitch);
-      setInnerEngine(settingsTemp.innerEngine);
+      setInnerPlan(settingsTemp.innerPLan);
     },
     [
-      setInnerEngine,
+      setInnerPlan,
       setInnerSwitch,
       setMainLanguage,
       setSubLanguage,
       setTheme,
       setUnderlineOpened,
       setUnderlineShortcut,
+      setEnterShortcut,
       setWindowsFixed,
     ],
   );

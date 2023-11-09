@@ -2,10 +2,11 @@ import { invoke } from '@tauri-apps/api/tauri';
 import { open } from '@tauri-apps/api/shell';
 import { OsType, type } from '@tauri-apps/api/os';
 import { Code2Language, TCode, TLanguage } from '@/common/constants';
+import dayjs from 'dayjs';
 
 /** rust调试输出 */
 export function rConsoleLog(text: string) {
-  invoke('console_log', { text });
+  invoke('console_log', { text, time: dayjs().format('HH:mm:ss.SSS') });
 }
 
 /** 调用阿里巴巴翻译源 */

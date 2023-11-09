@@ -20,9 +20,9 @@ import { GlobalEvent } from '@/common/event';
 import { Setting } from '@/utils/settings';
 import useWindowVisible from './_hook/useWindowHide';
 import { useAtom, useAtomValue } from 'jotai';
-import { innerEngine, mainLanguage, subLanguage, windowFixed } from '@/store/setting';
-import { AlibabaInnerTranslate, HuoshanInnterTranslate } from '@/services/innerTranslate';
-import { DeeplInnerTranslate } from '@/services/innerTranslate/deepl';
+import { innerPlan, mainLanguage, subLanguage, windowFixed } from '@/store/setting';
+import { AlibabaInnerTranslate, HuoshanInnterTranslate, DeeplInnerTranslate } from '@/services/innerTranslate';
+import useEnterTranslate from './_hook/useEnterTranslate';
 
 const alibabaInnerTranslate = new AlibabaInnerTranslate();
 const huoshanInnerTranslate = new HuoshanInnterTranslate();
@@ -47,7 +47,7 @@ const Wrapper = styled.div`
       span + span {
         padding: 4px 6px;
         background-color: ${(props) => props.theme.themePrimary};
-        color: ${(props) => props.theme.textPrimary};
+        color: #ffffff;
         font-size: 12px;
         border-radius: 4px;
       }
@@ -122,6 +122,15 @@ const Wrapper = styled.div`
       .option-bar {
         margin-top: 10px;
         gap: 10px;
+      }
+      .whatlang {
+        padding: 0 10px;
+        height: 18px;
+        border-radius: 10px;
+        border: 1px solid ${(props) => props.theme.themePrimary};
+        color: ${(props) => props.theme.themePrimary};
+        font-size: 10px;
+        line-height: 18px;
       }
     }
     .language-select {
@@ -224,10 +233,11 @@ function App() {
   const [atomWindowFixed, setAtomWindowFixed] = useAtom(windowFixed);
   const atomMainLanguage = useAtomValue(mainLanguage);
   const atomSubLanguage = useAtomValue(subLanguage);
-  const atomInnerEngine = useAtomValue(innerEngine);
+  const atomInnerPlan = useAtomValue(innerPlan);
 
   const settingWindowRef = React.useRef<WebviewWindow | null>(null);
   const translateFnRef = React.useRef<(t?: string) => void>();
+  const inputRef = React.useRef<HTMLTextAreaElement>(null);
 
   const { loadSettings } = useSettingConfig();
 
@@ -240,6 +250,14 @@ function App() {
   });
 
   // =================================
+  // 监听输入翻译快捷键，当窗口出现后，设置focus
+  // =================================
+  useEnterTranslate(() => {
+    rConsoleLog('窗口出现');
+    inputRef.current?.focus();
+  });
+
+  // =================================
   // 监听窗口自动关闭，当窗口关闭时，清空原文
   // =================================
   useWindowVisible(() => {
@@ -247,6 +265,7 @@ function App() {
     setText('');
     setTranslateText('');
     setOpenResult(false);
+    setWhatLang(undefined);
   });
 
   useMount(() => {
@@ -283,11 +302,7 @@ function App() {
 
   const translateInterface = React.useMemo(() => {
     return deeplInnterTranslate;
-    if (atomInnerEngine === 'huoshan') {
-      return huoshanInnerTranslate;
-    }
-    return alibabaInnerTranslate;
-  }, [atomInnerEngine]);
+  }, []);
 
   // 原文与翻译后的文案
   const [text, setText] = React.useState<string>('');
@@ -298,6 +313,7 @@ function App() {
   const [targetLang, setTargetLang] = React.useState<TLanguageItem>(LanguageList[0]);
   const [openSourcePanel, setOpenSourcePanel] = React.useState<boolean>(false);
   const [openTargetPanel, setOpenTargetPanel] = React.useState<boolean>(false);
+  const [whatLang, setWhatLang] = React.useState<TLanguageItem>();
 
   const handleLangPanel = React.useCallback(
     (type: 'source' | 'target') => {
@@ -343,6 +359,23 @@ function App() {
     [atomMainLanguage, atomSubLanguage, sourceLang.key, targetLang.key],
   );
 
+  const doTranslate = React.useCallback(
+    async (source: TLanguage, target: TLanguage, text: string) => {
+      let engineList = [huoshanInnerTranslate, alibabaInnerTranslate, deeplInnterTranslate];
+      if (atomInnerPlan === 'accuracy') {
+        engineList = [deeplInnterTranslate, huoshanInnerTranslate, alibabaInnerTranslate];
+      }
+      let res = '';
+      for (let engine of engineList) {
+        res = await engine.translate({ source, target, text });
+        if (res) {
+          break;
+        }
+      }
+      return res;
+    },
+    [atomInnerPlan],
+  );
   const handleTranslate = React.useCallback(
     async (_text?: string) => {
       const sourceText = _text || text;
@@ -361,18 +394,16 @@ function App() {
       setLoading(true);
       setOpenResult(true);
       const [sourceLang, targetLang] = await sourceTargetLang(sourceText);
+      const _whatLang = LanguageList.find((item) => item.key === sourceLang);
+      setWhatLang(_whatLang);
       console.log('sourceLang, targetLang', sourceLang, targetLang);
       try {
-        const translateResult = await translateInterface.translate({
-          source: sourceLang,
-          target: targetLang,
-          text: sourceText,
-        });
+        const translateResult = await doTranslate(sourceLang, targetLang, sourceText);
         setTranslateText(translateResult);
       } catch (error) {}
       setLoading(false);
     },
-    [openSourcePanel, openTargetPanel, sourceTargetLang, text, translateInterface],
+    [doTranslate, openSourcePanel, openTargetPanel, sourceTargetLang, text],
   );
   React.useEffect(() => {
     translateFnRef.current = handleTranslate;
@@ -449,7 +480,7 @@ function App() {
       <div className="toolbar flex items-center justify-between" data-tauri-drag-region>
         <div className="left flex items-center" onClick={() => openUrlByDefaultBrowser(Official_Web_Url)}>
           <span>Z.E.U.S</span>
-          {/* <span>免费版</span> */}
+          <span>Beta</span>
         </div>
         <div className="right flex items-center">
           {/* <span className="i-carbon-time" title="历史记录" /> */}
@@ -470,13 +501,22 @@ function App() {
           {/* 输入原文 */}
           <div className="original">
             <textarea
+              ref={inputRef}
               value={text}
               rows={5}
               placeholder="请输入单词或句子"
-              onChange={(e) => setText(e.target.value)}
+              onChange={(e) => {
+                setText(e.target.value);
+                if (whatLang) {
+                  setWhatLang(undefined);
+                }
+              }}
               onKeyDown={handleEnter}
             />
             <div className="option-bar flex items-center justify-end">
+              {sourceLang.key === 'auto' && whatLang && whatLang.key !== 'auto' && (
+                <div className="whatlang">{whatLang.name}</div>
+              )}
               {/* <span className="i-carbon-volume-up icon" title="朗读" /> */}
               <span className="i-carbon-copy icon" title="复制" onClick={() => handleCopy(text)} />
               <span

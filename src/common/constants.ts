@@ -12,7 +12,7 @@ export type TCode = 'eng' | 'cmn' | 'deu' | 'jpn' | 'kor' | 'spa' | 'por' | 'tha
 
 export type TTheme = 'light' | 'dark';
 
-export type TInnerTranslateEngine = 'alibaba' | 'huoshan';
+export type TInnerTranslatePlan = 'speed' | 'accuracy';
 
 export interface TLanguageItem {
   key: TLanguage;

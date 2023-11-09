@@ -50,7 +50,7 @@ const API_URL = 'https://www2.deepl.com/jsonrpc';
 
 export class DeeplInnerTranslate extends InnterTranslate {
   public async translate(params: ITranslateParams): Promise<string> {
-    rConsoleLog('huoshan tarnslate engine');
+    rConsoleLog('deepl tarnslate engine');
     await super.translate(params);
     const client = this._client as Client;
     try {
