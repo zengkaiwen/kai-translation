@@ -1,18 +1,18 @@
 /* eslint-disable object-curly-spacing */
 import * as React from 'react';
 import { styled } from 'styled-components';
-import { useMount, useUnmount, useUpdateEffect } from 'ahooks';
+import { useMount, useUnmount } from 'ahooks';
 import { LogicalSize, appWindow, WebviewWindow, getAll } from '@tauri-apps/api/window';
 import { writeText } from '@tauri-apps/api/clipboard';
 import cls from 'classnames';
 import { toast } from 'react-hot-toast';
 
-import { LanguageList, Official_Web_Url, TLanguage, TLanguageItem } from '@/common/constants';
+import { LanguageList, Official_Web_Url, TLanguage, TLanguageItem, Translate_Window } from '@/common/constants';
 import Accordion from '@/components/Accordion/index.tsx';
 import IconSpin from '@/components/IconSpin/index.tsx';
-import { getTextLang, openUrlByDefaultBrowser, rConsoleLog, rTranslate } from '@/utils';
+import { getTextLang, openUrlByDefaultBrowser, rConsoleLog } from '@/utils';
 import Scrollbar from '@/components/Scrollbar/index.tsx';
-import useAutoCopyHook from './_hook/useAutoCopyHook';
+import useUnderlineTranslate from './_hook/useUnderlineTranslate';
 import { listen } from '@tauri-apps/api/event';
 import { SystemTrayPayload } from '@/common/systemtray.ts';
 import useSettingConfig from '@/hooks/useSettingConfig.ts';
@@ -20,27 +20,33 @@ import { GlobalEvent } from '@/common/event';
 import { Setting } from '@/utils/settings';
 import useWindowVisible from './_hook/useWindowHide';
 import { useAtom, useAtomValue } from 'jotai';
-import { mainLanguage, subLanguage, windowFixed } from '@/store';
+import { innerPlan, mainLanguage, subLanguage, windowFixed } from '@/store/setting';
+import { AlibabaInnerTranslate, HuoshanInnterTranslate, DeeplInnerTranslate } from '@/services/innerTranslate';
+import useEnterTranslate from './_hook/useEnterTranslate';
+
+const alibabaInnerTranslate = new AlibabaInnerTranslate();
+const huoshanInnerTranslate = new HuoshanInnterTranslate();
+const deeplInnterTranslate = new DeeplInnerTranslate();
 
 const Wrapper = styled.div`
   overflow: hidden;
-  min-height: 264px;
-  max-height: 720px;
-  background-color: #ffffff;
+  min-height: ${Translate_Window.minHeight}px;
+  max-height: ${Translate_Window.maxHeight}px;
+  background-color: ${(props) => props.theme.bgPrimary};
   border-radius: 10px;
-  border: 1px solid #e5e5e5;
+  border: 1px solid ${(props) => props.theme.linePrimary};
+  color: ${(props) => props.theme.textPrimary};
+  transition: all 0.3s ease-in-out;
 
   .toolbar {
-    margin: 4px 12px;
-    padding: 8px 10px;
-    background-color: #ffffff;
-    cursor: move;
+    padding: 12px 22px;
+    cursor: grab;
     .left {
       cursor: pointer;
       gap: 10px;
       span + span {
         padding: 4px 6px;
-        background-color: #6659ea;
+        background-color: ${(props) => props.theme.themePrimary};
         color: #ffffff;
         font-size: 12px;
         border-radius: 4px;
@@ -51,15 +57,15 @@ const Wrapper = styled.div`
     }
   }
   .icon {
-    background-color: #787878;
-    color: #787878;
+    background-color: ${(props) => props.theme.textPrimary};
+    color: ${(props) => props.theme.textPrimary};
     &:hover {
-      background-color: #6659ea;
-      color: #6659ea;
+      background-color: ${(props) => props.theme.themePrimary};
+      color: ${(props) => props.theme.themePrimary};
     }
     &.active {
-      background-color: #6659ea;
-      color: #6659ea;
+      background-color: ${(props) => props.theme.themePrimary};
+      color: ${(props) => props.theme.themePrimary};
     }
   }
   .i-carbon-chevron-left {
@@ -80,7 +86,8 @@ const Wrapper = styled.div`
       margin: 10px 12px;
       border-radius: 6px;
       padding: 8px 10px;
-      background-color: #f6f8fa;
+      background-color: ${(props) => props.theme.bgSecond};
+      transition: all 0.3s ease-in-out;
       textarea {
         margin: 0;
         padding: 0;
@@ -89,7 +96,7 @@ const Wrapper = styled.div`
         resize: none;
         font-size: 13px;
         line-height: 20px;
-        color: #232323;
+        color: ${(props) => props.theme.textPrimary};
 
         border-radius: 0;
         background: transparent;
@@ -101,16 +108,13 @@ const Wrapper = styled.div`
         box-sizing: border-box;
         &::placeholder {
           font-family: 'PingFangSC-Regular', 'Microsoft YaHei', Courier, monospace;
+          color: ${(props) => props.theme.textColorFourth};
+          transition: all 0.3s ease-in-out;
         }
         &:focus {
           outline: none;
         }
         height: auto;
-        &::placeholder {
-          font-family: 'TrubitPLEX';
-          color: ${(props) => props.theme.textColorFourth};
-          transition: all 0.3s ease-in-out;
-        }
         &::-webkit-scrollbar {
           display: none;
         }
@@ -119,12 +123,22 @@ const Wrapper = styled.div`
         margin-top: 10px;
         gap: 10px;
       }
+      .whatlang {
+        padding: 0 10px;
+        height: 18px;
+        border-radius: 10px;
+        border: 1px solid ${(props) => props.theme.themePrimary};
+        color: ${(props) => props.theme.themePrimary};
+        font-size: 10px;
+        line-height: 18px;
+      }
     }
     .language-select {
       margin: 10px 12px;
       border-radius: 6px;
       font-size: 14px;
-      background-color: #f6f8fa;
+      background-color: ${(props) => props.theme.bgSecond};
+      transition: all 0.3s ease-in-out;
       .header {
         padding: 8px 10px;
         > div {
@@ -141,27 +155,27 @@ const Wrapper = styled.div`
       }
       .content {
         padding: 20px 10px;
-        border-top: 1px solid rgba(0, 0, 0, 0.04);
+        border-top: 1px solid ${(props) => props.theme.lineSecond};
         flex-wrap: wrap;
         > div {
           margin: 4px 4px;
           padding: 4px 8px;
           font-size: 12px;
           line-height: 14px;
-          background-color: #efefef;
+          background-color: ${(props) => props.theme.bgThird};
           border-radius: 4px;
           cursor: pointer;
           transition: all 0.3s ease-in-out;
           &:hover {
-            background-color: #d2d2d2;
+            background-color: ${(props) => props.theme.bgFour};
           }
           &.active {
-            background-color: #d2d2d2;
+            background-color: ${(props) => props.theme.bgFour};
           }
           &.disabled {
             pointer-events: none;
             cursor: not-allowed;
-            color: #999;
+            color: ${(props) => props.theme.disabled};
           }
           span:nth-child(2) {
             padding-left: 4px;
@@ -172,7 +186,8 @@ const Wrapper = styled.div`
     .result-panel {
       margin: 10px 12px;
       border-radius: 6px;
-      background-color: #f6f8fa;
+      background-color: ${(props) => props.theme.bgSecond};
+      transition: all 0.3s ease-in-out;
       .header {
         padding: 8px 10px;
         font-size: 14px;
@@ -180,21 +195,21 @@ const Wrapper = styled.div`
       }
       .content {
         padding: 18px 10px 8px;
-        border-top: 1px solid rgba(0, 0, 0, 0.04);
+        border-top: 1px solid ${(props) => props.theme.lineSecond};
         font-size: 14px;
         line-height: 20px;
-        color: #363636;
+        color: ${(props) => props.theme.textPrimary};
       }
       .loading {
         min-height: 36px;
       }
       .empty {
         padding: 8px 10px;
-        border-top: 1px solid rgba(0, 0, 0, 0.04);
+        border-top: 1px solid ${(props) => props.theme.lineSecond};
         font-size: 12px;
         line-height: 20px;
         text-align: center;
-        color: #a2a2a2;
+        color: ${(props) => props.theme.textFour};
       }
       .footer {
         padding: 8px 10px;
@@ -218,27 +233,40 @@ function App() {
   const [atomWindowFixed, setAtomWindowFixed] = useAtom(windowFixed);
   const atomMainLanguage = useAtomValue(mainLanguage);
   const atomSubLanguage = useAtomValue(subLanguage);
+  const atomInnerPlan = useAtomValue(innerPlan);
+
   const settingWindowRef = React.useRef<WebviewWindow | null>(null);
+  const translateFnRef = React.useRef<(t?: string) => void>();
+  const inputRef = React.useRef<HTMLTextAreaElement>(null);
+
   const { loadSettings } = useSettingConfig();
 
   // =================================
   // 监听划词翻译快捷键，当有文本变动时，触发
   // =================================
-  const copyText = useAutoCopyHook();
-  useUpdateEffect(() => {
+  useUnderlineTranslate((copyText) => {
     setText(copyText);
-    handleTranslate(copyText);
-  }, [copyText]);
+    translateFnRef.current?.(copyText);
+  });
+
+  // =================================
+  // 监听输入翻译快捷键，当窗口出现后，设置focus
+  // =================================
+  useEnterTranslate(() => {
+    rConsoleLog('窗口出现');
+    inputRef.current?.focus();
+  });
 
   // =================================
   // 监听窗口自动关闭，当窗口关闭时，清空原文
   // =================================
-  const isVisible = useWindowVisible();
-  useUpdateEffect(() => {
-    if (!isVisible) {
-      setText('');
-    }
-  }, [isVisible]);
+  useWindowVisible(() => {
+    // rConsoleLog('隐藏窗口');
+    setText('');
+    setTranslateText('');
+    setOpenResult(false);
+    setWhatLang(undefined);
+  });
 
   useMount(() => {
     // 将body元素添加到观察者中
@@ -281,6 +309,7 @@ function App() {
   const [targetLang, setTargetLang] = React.useState<TLanguageItem>(LanguageList[0]);
   const [openSourcePanel, setOpenSourcePanel] = React.useState<boolean>(false);
   const [openTargetPanel, setOpenTargetPanel] = React.useState<boolean>(false);
+  const [whatLang, setWhatLang] = React.useState<TLanguageItem>();
 
   const handleLangPanel = React.useCallback(
     (type: 'source' | 'target') => {
@@ -326,6 +355,23 @@ function App() {
     [atomMainLanguage, atomSubLanguage, sourceLang.key, targetLang.key],
   );
 
+  const doTranslate = React.useCallback(
+    async (source: TLanguage, target: TLanguage, text: string) => {
+      let engineList = [huoshanInnerTranslate, alibabaInnerTranslate, deeplInnterTranslate];
+      if (atomInnerPlan === 'accuracy') {
+        engineList = [deeplInnterTranslate, huoshanInnerTranslate, alibabaInnerTranslate];
+      }
+      let res = '';
+      for (let engine of engineList) {
+        res = await engine.translate({ source, target, text });
+        if (res) {
+          break;
+        }
+      }
+      return res;
+    },
+    [atomInnerPlan],
+  );
   const handleTranslate = React.useCallback(
     async (_text?: string) => {
       const sourceText = _text || text;
@@ -344,15 +390,20 @@ function App() {
       setLoading(true);
       setOpenResult(true);
       const [sourceLang, targetLang] = await sourceTargetLang(sourceText);
+      const _whatLang = LanguageList.find((item) => item.key === sourceLang);
+      setWhatLang(_whatLang);
       console.log('sourceLang, targetLang', sourceLang, targetLang);
       try {
-        const transResult: string = await rTranslate(sourceLang, targetLang, sourceText);
-        setTranslateText(transResult || '');
+        const translateResult = await doTranslate(sourceLang, targetLang, sourceText);
+        setTranslateText(translateResult);
       } catch (error) {}
       setLoading(false);
     },
-    [openSourcePanel, openTargetPanel, sourceTargetLang, text],
+    [doTranslate, openSourcePanel, openTargetPanel, sourceTargetLang, text],
   );
+  React.useEffect(() => {
+    translateFnRef.current = handleTranslate;
+  }, [handleTranslate]);
 
   const handleEnter = React.useCallback(
     async (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
@@ -389,7 +440,7 @@ function App() {
       visible: true,
       focus: true,
       hiddenTitle: true,
-      width: 480,
+      width: 600,
       height: 480,
       alwaysOnTop: true,
     });
@@ -425,7 +476,7 @@ function App() {
       <div className="toolbar flex items-center justify-between" data-tauri-drag-region>
         <div className="left flex items-center" onClick={() => openUrlByDefaultBrowser(Official_Web_Url)}>
           <span>Z.E.U.S</span>
-          {/* <span>免费版</span> */}
+          <span>Beta</span>
         </div>
         <div className="right flex items-center">
           {/* <span className="i-carbon-time" title="历史记录" /> */}
@@ -446,13 +497,22 @@ function App() {
           {/* 输入原文 */}
           <div className="original">
             <textarea
+              ref={inputRef}
               value={text}
               rows={5}
               placeholder="请输入单词或句子"
-              onChange={(e) => setText(e.target.value)}
+              onChange={(e) => {
+                setText(e.target.value);
+                if (whatLang) {
+                  setWhatLang(undefined);
+                }
+              }}
               onKeyDown={handleEnter}
             />
             <div className="option-bar flex items-center justify-end">
+              {sourceLang.key === 'auto' && whatLang && whatLang.key !== 'auto' && (
+                <div className="whatlang">{whatLang.name}</div>
+              )}
               {/* <span className="i-carbon-volume-up icon" title="朗读" /> */}
               <span className="i-carbon-copy icon" title="复制" onClick={() => handleCopy(text)} />
               <span

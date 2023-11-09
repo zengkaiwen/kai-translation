@@ -1,6 +1,6 @@
 import { Position } from '@/common/constants';
 import { Monitor, availableMonitors } from '@tauri-apps/api/window';
-// import { rConsoleLog } from '.';
+import { rConsoleLog } from '.';
 
 export interface MonitorInfo {
   position: {
@@ -17,17 +17,19 @@ export interface MonitorInfo {
 let monitors: Monitor[] = [];
 
 /** 初始化显示器 */
-export async function initMonitors() {
-  if (monitors.length > 0) return;
+export async function getMonitors() {
+  if (monitors.length > 0) return monitors;
   monitors = await availableMonitors();
   // console.log('显示器', monitors);
-  // rConsoleLog(`显示器列表, ${JSON.stringify(monitors)}`);
+  rConsoleLog(`显示器列表, ${JSON.stringify(monitors)}`);
+  return monitors;
 }
 
-/** 获取当前坐标所在的显示器缩放值 */
-export function getCursorMonitorScaleFactor(pos: Position): number {
-  const currentMonitor = monitors.find((item) => isInMonitor(pos, item));
-  return currentMonitor?.scaleFactor || 1;
+/** 获取当前坐标所在的显示器信息 */
+export async function getCursorMonitorInfo(pos: Position): Promise<MonitorInfo | undefined> {
+  const monitos = await getMonitors();
+  const currentMonitor = monitos.find((item) => isInMonitor(pos, item));
+  return currentMonitor;
 }
 
 function isInMonitor(pos: Position, monitor: Monitor): boolean {

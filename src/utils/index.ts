@@ -2,10 +2,11 @@ import { invoke } from '@tauri-apps/api/tauri';
 import { open } from '@tauri-apps/api/shell';
 import { OsType, type } from '@tauri-apps/api/os';
 import { Code2Language, TCode, TLanguage } from '@/common/constants';
+import dayjs from 'dayjs';
 
 /** rust调试输出 */
 export function rConsoleLog(text: string) {
-  invoke('console_log', { text });
+  invoke('console_log', { text, time: dayjs().format('HH:mm:ss.SSS') });
 }
 
 /** 调用阿里巴巴翻译源 */
@@ -15,6 +16,11 @@ export function rTranslate(source: TLanguage, target: TLanguage, text: string) {
     target,
     text,
   }) as Promise<string>;
+}
+
+export function rBrotilParse(data: string) {
+  console.log('data: ', data);
+  return invoke('brotli_parse', { data }) as Promise<string>;
 }
 
 /** 获取物理像素上的鼠标位置 */

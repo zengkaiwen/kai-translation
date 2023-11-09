@@ -1,21 +1,30 @@
 import { exists, BaseDirectory, readTextFile, writeTextFile, createDir } from '@tauri-apps/api/fs';
 import { cloneDeep, pick } from 'lodash';
-import { TLanguage } from '@/common/constants';
+import { TInnerTranslatePlan, TLanguage, TTheme } from '@/common/constants';
 
 export interface Setting {
   underline: boolean;
   underlineShortcut: string;
+  enterShortcut: string;
   windowFixed: boolean;
   mainLanguage: TLanguage;
   subLanguage: TLanguage;
+  // v0.0.4
+  theme: TTheme;
+  innerSwitch: boolean;
+  innerPLan: TInnerTranslatePlan;
 }
 
 const defaultSettings: Setting = {
   underline: true,
   underlineShortcut: 'Alt+Shift+A',
+  enterShortcut: 'Alt+Shift+Z',
   windowFixed: false,
   mainLanguage: 'zh',
   subLanguage: 'en',
+  theme: 'light',
+  innerSwitch: true,
+  innerPLan: 'speed',
 };
 
 /**

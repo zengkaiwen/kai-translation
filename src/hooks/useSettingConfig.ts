@@ -2,11 +2,21 @@ import * as React from 'react';
 import { useMount } from 'ahooks';
 import { Setting, readSettings, writeSettings } from '@/utils/settings';
 import { useSetAtom } from 'jotai';
-import { mainLanguage, subLanguage, underlineOpened, underlineShortcut, windowFixed } from '@/store';
+import {
+  innerPlan,
+  innerSwitch,
+  mainLanguage,
+  subLanguage,
+  underlineOpened,
+  underlineShortcut,
+  enterShortcut,
+  windowFixed,
+} from '@/store/setting';
 import { rConsoleLog } from '@/utils';
 import { emit } from '@tauri-apps/api/event';
 import { GlobalEvent } from '@/common/event';
 import { cloneDeep } from 'lodash';
+import { theme } from '@/store/global';
 
 export interface SettingConfigResult {
   settings: Setting | undefined;
@@ -19,8 +29,12 @@ function useSettingConfig(): SettingConfigResult {
   const setWindowsFixed = useSetAtom(windowFixed);
   const setUnderlineOpened = useSetAtom(underlineOpened);
   const setUnderlineShortcut = useSetAtom(underlineShortcut);
+  const setEnterShortcut = useSetAtom(enterShortcut);
   const setMainLanguage = useSetAtom(mainLanguage);
   const setSubLanguage = useSetAtom(subLanguage);
+  const setTheme = useSetAtom(theme);
+  const setInnerSwitch = useSetAtom(innerSwitch);
+  const setInnerPlan = useSetAtom(innerPlan);
 
   const loadSettings = React.useCallback(
     async (_settings?: Setting) => {
@@ -34,10 +48,24 @@ function useSettingConfig(): SettingConfigResult {
       setWindowsFixed(settingsTemp.windowFixed);
       setUnderlineOpened(settingsTemp.underline);
       setUnderlineShortcut(settingsTemp.underlineShortcut);
+      setEnterShortcut(settingsTemp.enterShortcut);
       setMainLanguage(settingsTemp.mainLanguage);
       setSubLanguage(settingsTemp.subLanguage);
+      setTheme(settingsTemp.theme);
+      setInnerSwitch(settingsTemp.innerSwitch);
+      setInnerPlan(settingsTemp.innerPLan);
     },
-    [setMainLanguage, setSubLanguage, setUnderlineOpened, setUnderlineShortcut, setWindowsFixed],
+    [
+      setInnerPlan,
+      setInnerSwitch,
+      setMainLanguage,
+      setSubLanguage,
+      setTheme,
+      setUnderlineOpened,
+      setUnderlineShortcut,
+      setEnterShortcut,
+      setWindowsFixed,
+    ],
   );
 
   const saveSettings = React.useCallback(async (_settings: Setting) => {

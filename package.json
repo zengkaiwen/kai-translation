@@ -1,7 +1,7 @@
 {
   "name": "zeus",
   "private": true,
-  "version": "0.0.3",
+  "version": "0.0.4",
   "type": "module",
   "scripts": {
     "autocopy": "node src/move-binary.js",
@@ -12,13 +12,16 @@
     "doc": "docsify serve docs"
   },
   "dependencies": {
-    "@tauri-apps/api": "^1.4.0",
+    "@tauri-apps/api": "^1.5.1",
     "ahooks": "^3.7.8",
+    "buffer": "^6.0.3",
     "classnames": "^2.3.2",
+    "dayjs": "^1.11.10",
     "framer-motion": "^10.16.4",
     "jotai": "^2.4.2",
     "lodash": "^4.17.21",
     "mac-scrollbar": "^0.10.4",
+    "qs": "^6.11.2",
     "rc-switch": "^4.1.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
@@ -29,9 +32,10 @@
   "devDependencies": {
     "@applint/spec": "^1.2.3",
     "@iconify-json/carbon": "^1.1.21",
-    "@tauri-apps/cli": "^1.4.0",
+    "@tauri-apps/cli": "^1.5.6",
     "@types/lodash": "^4.14.199",
     "@types/node": "^20.7.0",
+    "@types/qs": "^6.9.8",
     "@types/react": "^18.2.15",
     "@types/react-dom": "^18.2.7",
     "@unocss/preset-icons": "^0.55.7",

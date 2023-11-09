@@ -43,7 +43,7 @@ const About = () => {
         onClick={() => openUrlByDefaultBrowser(Official_Web_Url)}
       />
       <h1 onClick={() => openUrlByDefaultBrowser(Official_Web_Url)}>
-        Z.E.U.S <small>v0.0.3</small>
+        Z.E.U.S <small>v0.0.4</small>
       </h1>
       <h2>一款小巧且精美的划词翻译软件</h2>
       <p>

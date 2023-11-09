@@ -1,0 +1,23 @@
+{
+  "version": "v0.0.5",
+  "notes": "【版本更新】\n测试更新内容v2",
+  "pub_date": "2023-10-22T19:25:57Z",
+  "platforms": {
+    "darwin-x86_64": {
+      "signature": "dW50cnVzdGVkIGNvbW1lbnQ6IHNpZ25hdHVyZSBmcm9tIHRhdXJpIHNlY3JldCBrZXkKUlVRM2FFK2tlazlyNVdNR0hoY3VncGZmSkVya3FYTlZKdzFPL3Y1Nk5yQXdqcFhEVThhS1lhbXVWZ21sanBXNEptQlFLeHRyUzlqS3J5VThucUJjTURsUG9RWFFuZXRkY0FVPQp0cnVzdGVkIGNvbW1lbnQ6IHRpbWVzdGFtcDoxNjk3NTM1NTI1CWZpbGU6emV1cy5hcHAudGFyLmd6CkVBM1lUVjVKMDJ3OHd3N1JYWFFSSitmTEpxT0VsengwNXE4KzhCTzFKWWZOa1loQWJSQlNOdHpmVUFFbDk4clE3Q253S3lycENXMSszU0ZZcTNKeEN3PT0K",
+      "url": "https://minio-server.kevin-zeus.top/zeus/zeus.app.tar.gz"
+    },
+    "darwin-aarch64": {
+      "signature": "dW50cnVzdGVkIGNvbW1lbnQ6IHNpZ25hdHVyZSBmcm9tIHRhdXJpIHNlY3JldCBrZXkKUlVRM2FFK2tlazlyNVdNR0hoY3VncGZmSkVya3FYTlZKdzFPL3Y1Nk5yQXdqcFhEVThhS1lhbXVWZ21sanBXNEptQlFLeHRyUzlqS3J5VThucUJjTURsUG9RWFFuZXRkY0FVPQp0cnVzdGVkIGNvbW1lbnQ6IHRpbWVzdGFtcDoxNjk3NTM1NTI1CWZpbGU6emV1cy5hcHAudGFyLmd6CkVBM1lUVjVKMDJ3OHd3N1JYWFFSSitmTEpxT0VsengwNXE4KzhCTzFKWWZOa1loQWJSQlNOdHpmVUFFbDk4clE3Q253S3lycENXMSszU0ZZcTNKeEN3PT0K",
+      "url": "https://minio-server.kevin-zeus.top/zeus/zeus.app.tar.gz"
+    },
+    "windows-aarch64": {
+      "signature": "Content of app.AppImage.tar.gz.sig",
+      "url": "https://github.com/username/reponame/releases/download/v1.0.0/app-amd64.AppImage.tar.gz"
+    },
+    "windows-x86_64": {
+      "signature": "Content of app-setup.nsis.sig or app.msi.sig, depending on the chosen format",
+      "url": "https://github.com/username/reponame/releases/download/v1.0.0/app-x64-setup.msi.zip"
+    }
+  }
+}

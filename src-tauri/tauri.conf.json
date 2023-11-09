@@ -8,11 +8,20 @@
   },
   "package": {
     "productName": "zeus",
-    "version": "0.0.3"
+    "version": "0.0.4"
   },
   "tauri": {
     "allowlist": {
       "all": false,
+      "http": {
+        "all": true,
+        "scope": [
+          "https://translate.alibaba.com/api/*",
+          "https://fanyi.qq.com/api/*",
+          "https://translate.volcengine.com/*",
+          "https://www2.deepl.com/*"
+        ]
+      },
       "shell": {
         "open": true
       },
@@ -39,7 +48,7 @@
     "bundle": {
       "active": true,
       "targets": "all",
-      "identifier": "top.kevin-zeus.zeus",
+      "identifier": "top.zeusfy.www",
       "icon": ["icons/32x32.png", "icons/128x128.png", "icons/128x128@2x.png", "icons/icon.icns", "icons/icon.ico"],
       "externalBin": [],
       "resources": []
@@ -66,7 +75,7 @@
     ],
     "systemTray": {
       "iconPath": "icons/128x128@2x.png",
-      "iconAsTemplate": true
+      "iconAsTemplate": false
     }
   }
 }

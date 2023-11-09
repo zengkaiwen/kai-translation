@@ -10,8 +10,9 @@ const Wrapper = styled.div`
   min-width: 100px;
   height: 32px;
   border-radius: 6px;
-  background-color: #e5e5e5;
+  background-color: ${(props) => props.theme.bgThird};
   overflow: hidden;
+  transition: all 0.3s ease-in-out;
 
   input,
   label,
@@ -54,15 +55,14 @@ const Wrapper = styled.div`
     gap: 4px;
     padding: 0 8px;
     font-size: 12px;
-    color: #9c9c9c;
+    color: ${(props) => props.theme.textThird};
     span {
       color: inherit;
-      font-weight: 100;
       transition: all 0.3s ease-in-out;
     }
     span.active {
-      color: #6659ea;
-      font-weight: 500;
+      color: ${(props) => props.theme.themePrimary};
+      text-shadow: 0px 0 1px ${(props) => props.theme.themePrimary};
       transition: all 0.3s ease-in-out;
     }
   }
@@ -74,7 +74,7 @@ const Wrapper = styled.div`
   }
 
   input:focus + label {
-    border: 1px solid #6659ea;
+    border: 1px solid ${(props) => props.theme.themePrimary};
     border-radius: 6px;
     transition: all 0.3s ease-in-out;
   }

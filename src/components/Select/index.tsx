@@ -18,37 +18,37 @@ const Wrapper = styled.div`
     min-width: 100px;
     width: max-content;
     height: 30px;
-    background-color: #e5e5e5;
+    background-color: ${(props) => props.theme.bgThird};
     overflow: hidden;
     border-radius: 6px;
     box-sizing: border-box;
     .placeholder {
-      color: #7c7c7c;
+      color: ${(props) => props.theme.textThird};
       transition: all 0.3s ease-in-out;
       font-size: 12px;
     }
     .selection {
-      color: #6659ea;
+      color: ${(props) => props.theme.themePrimary};
       font-size: 12px;
     }
     .arrow {
-      fill: #595959;
-      transition: all 0.3s ease-in-out;
+      fill: ${(props) => props.theme.textPrimary};
+      transition: transform 0.3s ease-in-out;
     }
   }
   &:not(.disabled).visible {
-    border: 1px solid #6659ea;
+    border: 1px solid ${(props) => props.theme.themePrimary};
     .arrow {
-      fill: #6659ea;
+      fill: ${(props) => props.theme.themePrimary};
       transform: rotateZ(-180deg);
     }
   }
   &:not(.disabled):hover {
-    border: 1px solid #6659ea;
+    border: 1px solid ${(props) => props.theme.themePrimary};
     cursor: pointer;
   }
   &.disabled {
-    background: #9e9e9e;
+    background: ${(props) => props.theme.disabled};
     user-select: none;
     cursor: not-allowed;
     transition: all 0.3s ease-in-out;
@@ -58,7 +58,7 @@ const Wrapper = styled.div`
 const Trigger = styled(motion.div)`
   /* global */
   position: absolute;
-  border: 1px solid #e5e5e5;
+  border: 1px solid ${(props) => props.theme.linePrimary};
   box-sizing: border-box;
   overflow: hidden;
   z-index: 1;
@@ -66,7 +66,7 @@ const Trigger = styled(motion.div)`
   border-radius: 6px;
   max-height: 150px;
   min-width: max-content;
-  background-color: #ffffff;
+  background-color: ${(props) => props.theme.bgPrimary};
   .ms-container {
     width: 100%;
     max-height: 200px;
@@ -80,7 +80,7 @@ const Trigger = styled(motion.div)`
     cursor: pointer;
     transition: all 0.3s ease-in-out;
     &:hover {
-      background: #e5e5e5;
+      background: ${(props) => props.theme.bgSecond};
     }
   }
   ul {
@@ -88,7 +88,7 @@ const Trigger = styled(motion.div)`
     width: 100%;
     padding: 0 !important;
     margin: 0 !important;
-    background-color: #ffffff !important;
+    background-color: ${(props) => props.theme.bgPrimary} !important;
   }
 `;
 

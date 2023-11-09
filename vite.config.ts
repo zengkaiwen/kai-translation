@@ -22,6 +22,14 @@ export default defineConfig(async () => ({
       '@': path.resolve(__dirname, 'src'),
     },
   },
+  minify: 'terser',
+  terserOptions: {
+    compress: {
+      //生产环境时移除console
+      drop_console: true,
+      drop_debugger: true,
+    },
+  },
   // 3. to make use of `TAURI_DEBUG` and other env variables
   // https://tauri.studio/v1/api/config#buildconfig.beforedevcommand
   envPrefix: ['VITE_', 'TAURI_'],

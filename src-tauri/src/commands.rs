@@ -1,9 +1,9 @@
+use brotli2::read::BrotliDecoder;
 use mouse_position::mouse_position::Mouse;
-use rdev::{EventType, Key, simulate};
+use rdev::{simulate, EventType, Key};
+use std::io::Read;
+use std::{thread, time};
 use whatlang::detect;
-use std::{time, thread};
-
-use crate::{constant::TranslateQuery, crawler::alibaba};
 
 fn send(event_type: &EventType) {
     let delay = time::Duration::from_millis(20);
@@ -18,36 +18,18 @@ fn send(event_type: &EventType) {
 }
 
 #[tauri::command]
-pub async fn alibaba_transform(source: String, target: String, text: String) -> Result<String, ()> {
-    let query = TranslateQuery {
-        source,
-        target,
-        text,
-    };
-    let res = alibaba::translate(query).await;
-    match res {
-        Ok(result) => Ok(result),
-        Err(_) => Err(()),
-    }
+pub fn console_log(text: String, time: String) {
+    println!("Debug {}", time);
+    println!("├── {}", text);
+    println!("└────────────────────────────────────");
 }
 
 #[tauri::command]
-pub fn console_log(text: String) {
-    println!("【Debug】=========");
-    println!("{}", text);
-    println!("==================");
-}
-
-#[tauri::command]
-pub async fn get_mouse_position() ->  Result<(i32, i32), ()>{
+pub async fn get_mouse_position() -> Result<(i32, i32), ()> {
     let position = Mouse::get_mouse_position();
     match position {
-        Mouse::Position { x, y } => {
-            Ok((x, y))
-        },
-        Mouse::Error => {
-            Err(())
-        }
+        Mouse::Position { x, y } => Ok((x, y)),
+        Mouse::Error => Err(()),
     }
 }
 
@@ -59,7 +41,7 @@ pub async fn get_text_lang(text: String) -> Result<String, ()> {
 
 #[tauri::command]
 pub async fn auto_copy() {
-    thread::sleep(time::Duration::from_millis(500));
+    thread::sleep(time::Duration::from_millis(400));
 
     #[cfg(target_os = "windows")]
     send(&EventType::KeyPress(Key::ControlLeft));
@@ -73,6 +55,35 @@ pub async fn auto_copy() {
     send(&EventType::KeyRelease(Key::ControlLeft));
     #[cfg(target_os = "macos")]
     send(&EventType::KeyRelease(Key::MetaLeft));
+}
 
-    thread::sleep(time::Duration::from_millis(50));
+#[tauri::command]
+pub fn brotli_parse(data: String) -> Result<String, ()> {
+    // Parse the string data into a vector.
+    let vec: Result<Vec<u8>, _> = data.split(',').map(|s| s.trim().parse::<u8>()).collect();
+    let vec = match vec {
+        Ok(v) => v, // If parsing successful, use the parsed vector.
+        Err(_) => {
+            // If parsing failed, return an error result.
+            println!("{}: {}", "vec", "error");
+            return Err(());
+        }
+    };
+
+    // Try to create the BrotliDecoder and decompress the data.
+    let mut decompressor = BrotliDecoder::new(&vec[..]);
+    let mut result = vec![];
+    if let Err(e) = decompressor.read_to_end(&mut result) {
+        println!("read_to_end failed: {:?}", e);
+        return Err(());
+    }
+
+    // Try to convert the decompressed data into a String.
+    match String::from_utf8(result) {
+        Ok(s) => Ok(s),
+        Err(e) => {
+            println!("Conversion to string failed: {:?}", e);
+            Err(())
+        }
+    }
 }
