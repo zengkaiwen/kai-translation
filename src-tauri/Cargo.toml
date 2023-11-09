@@ -10,10 +10,10 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [build-dependencies]
-tauri-build = { version = "1.4", features = [] }
+tauri-build = { version = "1.5", features = [] }
 
 [dependencies]
-tauri = { version = "1.4", features = [ "http-all", "http-multipart", "shell-open", "path-all", "os-all", "fs-all", "system-tray", "clipboard-all", "global-shortcut-all", "window-all", "macos-private-api"] }
+tauri = { version = "1.5", features = [ "http-all", "http-multipart", "shell-open", "path-all", "os-all", "fs-all", "system-tray", "clipboard-all", "global-shortcut-all", "window-all", "macos-private-api"] }
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
 rdev = "0.5.3"

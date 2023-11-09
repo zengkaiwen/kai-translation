@@ -300,10 +300,6 @@ function App() {
     observer.unobserve(document.body);
   });
 
-  const translateInterface = React.useMemo(() => {
-    return deeplInnterTranslate;
-  }, []);
-
   // 原文与翻译后的文案
   const [text, setText] = React.useState<string>('');
   const [translateText, setTranslateText] = React.useState<string>('');

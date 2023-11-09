@@ -4,9 +4,6 @@ import { Provider } from 'jotai';
 import { createHashRouter, RouterProvider } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 import ThemeProvider from './theme';
-import Translate from '@/windows/Translate';
-import Setting from '@/windows/Setting';
-import About from './windows/About';
 
 import './reset.css';
 import './style.css';
@@ -16,10 +13,18 @@ const container = document.getElementById('root');
 
 const root = createRoot(container!);
 
+const Translate = React.lazy(() => import('@/windows/Translate'));
+const Setting = React.lazy(() => import('@/windows/Setting'));
+const About = React.lazy(() => import('@/windows/About'));
+
 const router = createHashRouter([
   {
     path: '/',
     element: <Translate />,
+  },
+  {
+    path: '/about',
+    element: <About />,
   },
   {
     path: '/setting',
