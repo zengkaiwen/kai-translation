@@ -1568,6 +1568,22 @@ dependencies = [
 ]
 
 [[package]]
+name = "kai"
+version = "0.0.4"
+dependencies = [
+ "brotli2",
+ "macos-accessibility-client",
+ "mouse_position",
+ "rdev",
+ "serde",
+ "serde_json",
+ "tauri",
+ "tauri-build",
+ "tfc",
+ "whatlang",
+]
+
+[[package]]
 name = "kuchiki"
 version = "0.8.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1689,6 +1705,16 @@ name = "mac"
 version = "0.1.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "c41e0c4fef86961ac6d6f8a82609f55f31b05e4fce149ac5710e439df7619ba4"
+
+[[package]]
+name = "macos-accessibility-client"
+version = "0.0.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "edf7710fbff50c24124331760978fb9086d6de6288dcdb38b25a97f8b1bdebbb"
+dependencies = [
+ "core-foundation 0.9.3",
+ "core-foundation-sys 0.8.4",
+]
 
 [[package]]
 name = "malloc_buf"
@@ -3304,6 +3330,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "tfc"
+version = "0.6.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "54f99968b5978ab5098180934becc543631211de4e950fe812fe6dcec135aecb"
+dependencies = [
+ "core-graphics 0.22.3",
+ "unicode-segmentation",
+]
+
+[[package]]
 name = "thin-slice"
 version = "0.1.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -4240,18 +4276,4 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "f4686009f71ff3e5c4dbcf1a282d0a44db3f021ba69350cd42086b3e5f1c6985"
 dependencies = [
  "libc",
-]
-
-[[package]]
-name = "zeus"
-version = "0.0.4"
-dependencies = [
- "brotli2",
- "mouse_position",
- "rdev",
- "serde",
- "serde_json",
- "tauri",
- "tauri-build",
- "whatlang",
 ]

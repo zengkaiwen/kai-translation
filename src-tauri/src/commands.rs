@@ -1,4 +1,5 @@
 use brotli2::read::BrotliDecoder;
+use macos_accessibility_client::accessibility;
 use mouse_position::mouse_position::Mouse;
 use rdev::{simulate, EventType, Key};
 use std::io::Read;
@@ -41,20 +42,23 @@ pub async fn get_text_lang(text: String) -> Result<String, ()> {
 
 #[tauri::command]
 pub async fn auto_copy() {
-    thread::sleep(time::Duration::from_millis(400));
+    let trusted = accessibility::application_is_trusted_with_prompt();
+    if trusted {
+        thread::sleep(time::Duration::from_millis(400));
 
-    #[cfg(target_os = "windows")]
-    send(&EventType::KeyPress(Key::ControlLeft));
-    #[cfg(target_os = "macos")]
-    send(&EventType::KeyPress(Key::MetaLeft));
+        #[cfg(target_os = "windows")]
+        send(&EventType::KeyPress(Key::ControlLeft));
+        #[cfg(target_os = "macos")]
+        send(&EventType::KeyPress(Key::MetaLeft));
 
-    send(&EventType::KeyPress(Key::KeyC));
-    send(&EventType::KeyRelease(Key::KeyC));
+        send(&EventType::KeyPress(Key::KeyC));
+        send(&EventType::KeyRelease(Key::KeyC));
 
-    #[cfg(target_os = "windows")]
-    send(&EventType::KeyRelease(Key::ControlLeft));
-    #[cfg(target_os = "macos")]
-    send(&EventType::KeyRelease(Key::MetaLeft));
+        #[cfg(target_os = "windows")]
+        send(&EventType::KeyRelease(Key::ControlLeft));
+        #[cfg(target_os = "macos")]
+        send(&EventType::KeyRelease(Key::MetaLeft));
+    }
 }
 
 #[tauri::command]

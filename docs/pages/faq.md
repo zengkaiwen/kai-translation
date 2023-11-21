@@ -11,10 +11,10 @@
 2、输入命令
 
 ```bash
-sudo xattr -rd com.apple.quarantine /Applications/zeus.app
+sudo xattr -rd com.apple.quarantine /Applications/kai.app
 ```
 
-在下面的 `password:` 后面输入开机密码（输入密码的时候不会显示），按下回车键即可，然后再重启 zeus 软件
+在下面的 `password:` 后面输入开机密码（输入密码的时候不会显示），按下回车键即可，然后再重启 kai 软件
 
 ## 2、v0.0.2 怎么关闭窗口
 

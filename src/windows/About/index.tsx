@@ -47,7 +47,7 @@ const About = () => {
       </h1>
       <h2>一款小巧且精美的划词翻译软件</h2>
       <p>
-        官网：<a>https://www.zeusfy.top/</a>
+        官网：<a>https://fy.kai-tools.com/</a>
       </p>
       <p>开发者邮箱：kevin_captain@163.com</p>
       <p>QQ群：516308223</p>

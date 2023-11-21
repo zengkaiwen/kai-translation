@@ -7,7 +7,7 @@
     "withGlobalTauri": false
   },
   "package": {
-    "productName": "zeus",
+    "productName": "kai",
     "version": "0.0.4"
   },
   "tauri": {
@@ -48,7 +48,7 @@
     "bundle": {
       "active": true,
       "targets": "all",
-      "identifier": "top.zeusfy.www",
+      "identifier": "com.kai-tools.fy",
       "icon": ["icons/32x32.png", "icons/128x128.png", "icons/128x128@2x.png", "icons/icon.icns", "icons/icon.ico"],
       "externalBin": [],
       "resources": []
@@ -61,7 +61,7 @@
       {
         "fullscreen": false,
         "resizable": false,
-        "title": "zeus",
+        "title": "kai",
         "width": 420,
         "height": 276,
         "skipTaskbar": true,

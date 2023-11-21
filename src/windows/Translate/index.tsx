@@ -591,7 +591,9 @@ function App() {
                 {!loading && translateText && (
                   <div className="content" dangerouslySetInnerHTML={{ __html: translateText }} />
                 )}
-                {!loading && !translateText && <div className="empty">{text ? '啊呜~ 出错啦' : '没有需翻译内容'}</div>}
+                {!loading && !translateText && (
+                  <div className="empty">{text ? '啊呜~ 出错啦，再试一下呢' : '没有需要翻译的内容~'}</div>
+                )}
                 {translateText && (
                   <div className="footer flex items-center justify-end">
                     {/* <span className="i-carbon-volume-up icon" title="朗读" /> */}
