@@ -49,9 +49,12 @@
       "active": true,
       "targets": "all",
       "identifier": "com.kai-tools.fy",
-      "icon": ["icons/32x32.png", "icons/128x128.png", "icons/128x128@2x.png", "icons/icon.icns", "icons/icon.ico"],
+      "icon": ["icons/32x32.png", "icons/128x128.png", "icons/256x256.png", "icons/icon.icns", "icons/icon.ico"],
       "externalBin": [],
-      "resources": []
+      "resources": [],
+      "macOS": {
+        "minimumSystemVersion": "10.13"
+      }
     },
     "security": {
       "csp": null
@@ -74,8 +77,8 @@
       }
     ],
     "systemTray": {
-      "iconPath": "icons/128x128@2x.png",
-      "iconAsTemplate": false
+      "iconPath": "icons/128x128.png",
+      "iconAsTemplate": true
     }
   }
 }
