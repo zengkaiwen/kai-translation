@@ -206,7 +206,7 @@ const Wrapper = styled.div`
         color: ${(props) => props.theme.textPrimary};
       }
       .loading {
-        min-height: 36px;
+        min-height: 56px;
       }
       .empty {
         padding: 8px 10px;
