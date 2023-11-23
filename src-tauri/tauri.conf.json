@@ -7,7 +7,7 @@
     "withGlobalTauri": false
   },
   "package": {
-    "productName": "zeus",
+    "productName": "kai",
     "version": "0.0.4"
   },
   "tauri": {
@@ -48,10 +48,13 @@
     "bundle": {
       "active": true,
       "targets": "all",
-      "identifier": "top.zeusfy.www",
-      "icon": ["icons/32x32.png", "icons/128x128.png", "icons/128x128@2x.png", "icons/icon.icns", "icons/icon.ico"],
+      "identifier": "com.kai-tools.fy",
+      "icon": ["icons/32x32.png", "icons/128x128.png", "icons/256x256.png", "icons/icon.icns", "icons/icon.ico"],
       "externalBin": [],
-      "resources": []
+      "resources": [],
+      "macOS": {
+        "minimumSystemVersion": "10.13"
+      }
     },
     "security": {
       "csp": null
@@ -61,7 +64,7 @@
       {
         "fullscreen": false,
         "resizable": false,
-        "title": "zeus",
+        "title": "kai",
         "width": 420,
         "height": 276,
         "skipTaskbar": true,
@@ -74,8 +77,8 @@
       }
     ],
     "systemTray": {
-      "iconPath": "icons/128x128@2x.png",
-      "iconAsTemplate": false
+      "iconPath": "icons/system.png",
+      "iconAsTemplate": true
     }
   }
 }

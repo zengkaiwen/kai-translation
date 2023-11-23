@@ -43,8 +43,13 @@ const Wrapper = styled.div`
     cursor: grab;
     .left {
       cursor: pointer;
-      gap: 10px;
-      span + span {
+      gap: 8px;
+      svg {
+        width: 34.35px;
+        height: 20px;
+        fill: ${(props) => props.theme.textPrimary};
+      }
+      span {
         padding: 4px 6px;
         background-color: ${(props) => props.theme.themePrimary};
         color: #ffffff;
@@ -201,7 +206,7 @@ const Wrapper = styled.div`
         color: ${(props) => props.theme.textPrimary};
       }
       .loading {
-        min-height: 36px;
+        min-height: 56px;
       }
       .empty {
         padding: 8px 10px;
@@ -228,6 +233,16 @@ const observer = new ResizeObserver((entries) => {
     }
   }
 });
+
+const IconKai: React.FC<React.SVGAttributes<SVGElement>> = (props) => {
+  return (
+    <svg version="1.1" width="331" height="289" viewBox="0 0 331 289" {...props}>
+      <g>
+        <path d="M111,89.6L130.092,116.462L75.48,155.756L129.426,225.02L103.23,245L54.834,183.284L54.834,245L4.44,245L4.44,89.6L54.834,89.6L54.834,129.782L111,89.6ZM258.63,134L258.63,245L231.99,245L231.99,235.898L140.97,245L140.97,134L258.63,134ZM191.364,160.64L191.364,213.254L231.99,209.258L231.99,160.64L191.364,160.64ZM323.454,121.346L273.06,121.346L273.06,89.6L323.454,89.6L323.454,121.346ZM323.454,245L273.06,245L273.06,134L323.454,134L323.454,245Z" />
+      </g>
+    </svg>
+  );
+};
 
 function App() {
   const [atomWindowFixed, setAtomWindowFixed] = useAtom(windowFixed);
@@ -475,7 +490,7 @@ function App() {
     <Wrapper>
       <div className="toolbar flex items-center justify-between" data-tauri-drag-region>
         <div className="left flex items-center" onClick={() => openUrlByDefaultBrowser(Official_Web_Url)}>
-          <span>Z.E.U.S</span>
+          <IconKai />
           <span>Beta</span>
         </div>
         <div className="right flex items-center">
@@ -591,7 +606,9 @@ function App() {
                 {!loading && translateText && (
                   <div className="content" dangerouslySetInnerHTML={{ __html: translateText }} />
                 )}
-                {!loading && !translateText && <div className="empty">{text ? '啊呜~ 出错啦' : '没有需翻译内容'}</div>}
+                {!loading && !translateText && (
+                  <div className="empty">{text ? '啊呜~ 出错啦，再试一下呢' : '没有需要翻译的内容~'}</div>
+                )}
                 {translateText && (
                   <div className="footer flex items-center justify-end">
                     {/* <span className="i-carbon-volume-up icon" title="朗读" /> */}

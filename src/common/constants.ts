@@ -1,4 +1,4 @@
-export const Official_Web_Url = 'https://www.zeusfy.top/';
+export const Official_Web_Url = 'https://fy.kai-tools.com/';
 
 export const Translate_Window = {
   width: 420,
