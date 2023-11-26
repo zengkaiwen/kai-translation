@@ -16,7 +16,7 @@ jobs:
             rust_target: aarch64-apple-darwin
           - os: windows-latest
             rust_target: x86_64-pc-windows-msvc
-    name: Desktop - Main ${{ matrix.platform.rust_target }}
+    name: Build - App ${{ matrix.platform.rust_target }}
     runs-on: ${{ matrix.platform.os }}
     steps:
       - name: Checkout repository
@@ -38,40 +38,50 @@ jobs:
         with:
           default: true
           override: true
-          profile: minimal
           toolchain: stable
           target: ${{ matrix.platform.rust_target }}
 
       - uses: Swatinem/rust-cache@v2
 
-      - name: Build Desktop
-        uses: JonasKruckenberg/tauri-build@v1.2.2
-        id: tauri_build
-        with:
-          target: ${{ matrix.platform.rust_target }}
+      # - name: Build Desktop
+      #   uses: JonasKruckenberg/tauri-build@v1.4.0
+      #   id: tauri_build
+      #   with:
+      #     target: ${{ matrix.platform.rust_target }}
 
-      # The artifacts output can now be used to upload the artifacts
-      - uses: actions/upload-artifact@v3
-        with:
-          name: artifacts
-          path: "${{ join(fromJSON(steps.tauri_build.outputs.artifacts), '\n') }}"
-
-  publish:
-    needs: build-binaries
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      # Download the previously uploaded artifacts
-      - uses: actions/download-artifact@v3
-        id: download
-        with:
-          name: artifacts
-          path: artifacts
-      # And create a release with the artifacts attached
-      - name: 'create release'
-        uses: softprops/action-gh-release@master
+      # # The artifacts output can now be used to upload the artifacts
+      # - uses: actions/upload-artifact@v3
+      #   with:
+      #     name: artifacts
+      #     path: "${{ join(fromJSON(steps.tauri_build.outputs.artifacts), '\n') }}"
+      - uses: tauri-apps/tauri-action@v0
         env:
-          GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAURI_PRIVATE_KEY: ${{ secrets.TAURI_PRIVATE_KEY }}
+          TAURI_KEY_PASSWORD: ${{ secrets.TAURI_KEY_PASSWORD }}
         with:
-          draft: false
-          files: ./artifacts/**/*
+          tagName: app-v__VERSION__ # the action automatically replaces \_\_VERSION\_\_ with the app version
+          releaseName: 'App v__VERSION__'
+          releaseBody: '点开 Assets 然后选择对应系统的安装包下载安装'
+          releaseDraft: true
+          prerelease: false
+
+  # publish:
+  #   needs: build-binaries
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v2
+  #     # Download the previously uploaded artifacts
+  #     - uses: actions/download-artifact@v3
+  #       id: download
+  #       with:
+  #         name: artifacts
+  #         path: artifacts
+  #     # And create a release with the artifacts attached
+  #     - name: 'create release'
+  #       uses: softprops/action-gh-release@master
+  #       env:
+  #         GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
+  #       with:
+  #         draft: false
+  #         files: ./artifacts/**/*
