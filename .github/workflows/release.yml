@@ -9,51 +9,41 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        platform:
-          - os: macos-latest
-            rust_target: x86_64-apple-darwin
-          - os: macos-latest
-            rust_target: aarch64-apple-darwin
-          - os: windows-latest
-            rust_target: x86_64-pc-windows-msvc
-    name: Build - App ${{ matrix.platform.rust_target }}
-    runs-on: ${{ matrix.platform.os }}
+        settings:
+          - platform: 'macos-latest'
+            args: '--verbose --target aarch64-apple-darwin'
+          - platform: 'macos-latest'
+            args: '--verbose --target x86_64-apple-darwin'
+          - platform: 'windows-latest'
+            args: '--verbose'
+    runs-on: ${{ matrix.settings.platform }}
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
-      - name: Setup node
-        uses: actions/setup-node@v3
+      # node
+      - name: install pnpm
+        uses: pnpm/action-setup@v2
         with:
-          node-version: 18
+          version: 8.x.x
 
-      - name: Install Pnpm
-        run: npm install -g pnpm
+      - name: setup node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
 
       - name: install frontend dependencies
         run: pnpm install
 
-      - name: Setup Rust
-        uses: actions-rs/toolchain@v1
+      # rust
+      - name: install Rust stable
+        uses: dtolnay/rust-toolchain@stable
         with:
-          default: true
-          override: true
-          toolchain: stable
-          target: ${{ matrix.platform.rust_target }}
+          targets: aarch64-apple-darwin
 
       - uses: Swatinem/rust-cache@v2
 
-      # - name: Build Desktop
-      #   uses: JonasKruckenberg/tauri-build@v1.4.0
-      #   id: tauri_build
-      #   with:
-      #     target: ${{ matrix.platform.rust_target }}
-
-      # # The artifacts output can now be used to upload the artifacts
-      # - uses: actions/upload-artifact@v3
-      #   with:
-      #     name: artifacts
-      #     path: "${{ join(fromJSON(steps.tauri_build.outputs.artifacts), '\n') }}"
       - uses: tauri-apps/tauri-action@v0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -65,23 +55,4 @@ jobs:
           releaseBody: '点开 Assets 然后选择对应系统的安装包下载安装'
           releaseDraft: true
           prerelease: false
-
-  # publish:
-  #   needs: build-binaries
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - uses: actions/checkout@v2
-  #     # Download the previously uploaded artifacts
-  #     - uses: actions/download-artifact@v3
-  #       id: download
-  #       with:
-  #         name: artifacts
-  #         path: artifacts
-  #     # And create a release with the artifacts attached
-  #     - name: 'create release'
-  #       uses: softprops/action-gh-release@master
-  #       env:
-  #         GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
-  #       with:
-  #         draft: false
-  #         files: ./artifacts/**/*
+          args: ${{ matrix.settings.args }}
