@@ -17,8 +17,8 @@ export interface Setting {
 
 const defaultSettings: Setting = {
   underline: true,
-  underlineShortcut: 'Alt+E',
-  enterShortcut: 'Alt+A',
+  underlineShortcut: 'Alt+Shift+E',
+  enterShortcut: 'Alt+Shift+Z',
   windowFixed: false,
   mainLanguage: 'zh',
   subLanguage: 'en',
